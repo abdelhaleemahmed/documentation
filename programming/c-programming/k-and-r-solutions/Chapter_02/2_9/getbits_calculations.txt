@@ -1,0 +1,56 @@
+(x = 25; p = 4; n = 3)
+01234567
+00011001
+result = 6
+_______________________
+(x = 9; p = 4; n = 3)
+01234567
+00001001
+result = 2
+_______________________
+(x = 7; p = 4; n = 3)
+01234567
+00000111
+result = 1
+_______________________
+(x = 7; p = 3; n = 4)
+01234567
+00000111
+result = 1 (wrong result ?.) it gives me 7!!!.
+_______________________
+(x = 7; p = 6; n = 3)
+01234567
+00001111
+result = 7 (wrong also it gives me ZERO)
+_________________________________________
+(x = 15; p = 6; n = 3)
+01234567
+00001111
+result = 0 (wrong also it gives me ZERO)
+__________________________________________
+(x = 15; p = 5; n = 3)
+01234567
+00001111
+result = 7 (wrong also it gives me ONE)
+___________________________________________
+
+It sames that, we must not give it (p + n) >=8 and aslo (p+1-n < number of decimal digits)
+for example tha last test (x = 15; p = 5; n = 3) if we set (n = 2) this will satisfy the
+first condition but (p + 1 - n) = (5 + 1 - 2) = 4; 15 -> 00001111 so the decimal digits
+are 1111 = 4 digits, which is equal to the previous equation, we will get a wrong result.
+
+How it works:
+Let us take this example, which it satisfy the condtitions we defined:
+
+(x = 7; p = 4; n = 3)
+01234567
+00000111
+result = 1
+-----------------------------------------------
+a-> x >> (p+1-n) -> x >> 2 (so x = 00000001)
+
+b-> (~0 << n) -> 100; ~(~0 << n) -> 011
+
+(a) & (b) -> 1; (which is the right result).
+
+.

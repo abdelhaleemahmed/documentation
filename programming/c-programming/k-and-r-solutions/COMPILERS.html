@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Compilers Guide - K&R Solutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .compiler-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .compiler-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .compiler-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .compiler-card h2 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .platform {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .compiler-card p {
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .install-section h3 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .pros, .cons {
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .pros {
+            background: #c6f6d5;
+            border-left: 4px solid #48bb78;
+        }
+
+        .cons {
+            background: #fed7d7;
+            border-left: 4px solid #f56565;
+        }
+
+        .pros h4, .cons h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            font-size: 0.9rem;
+            padding-left: 15px;
+        }
+
+        .pros li, .cons li {
+            margin-bottom: 4px;
+        }
+
+        .pros li:before {
+            content: "✓ ";
+            color: #22543d;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .cons li:before {
+            content: "✗ ";
+            color: #742a2a;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin: 30px 0;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .note {
+            background: #bee3f8;
+            border-left: 4px solid #2c5282;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .note strong {
+            color: #2c5282;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="documentation.html" class="back-link">← Back to Documentation</a>
+
+        <h1>C Compilers Guide</h1>
+        <p class="subtitle">Choosing the right compiler for your C development</p>
+
+        <p>A C compiler translates your source code (.c files) into executable programs. Here are the most popular options:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Compiler</th>
+                    <th>Platform</th>
+                    <th>Type</th>
+                    <th>Cost</th>
+                    <th>Best For</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>GCC</strong></td>
+                    <td>Linux, Windows, Mac</td>
+                    <td>Free & Open Source</td>
+                    <td>Free</td>
+                    <td>General purpose, teaching</td>
+                </tr>
+                <tr>
+                    <td><strong>Clang</strong></td>
+                    <td>Linux, Windows, Mac</td>
+                    <td>Free & Open Source</td>
+                    <td>Free</td>
+                    <td>Modern features, better error messages</td>
+                </tr>
+                <tr>
+                    <td><strong>MSVC</strong></td>
+                    <td>Windows</td>
+                    <td>Commercial</td>
+                    <td>Free (Community)</td>
+                    <td>Windows development, Visual Studio</td>
+                </tr>
+                <tr>
+                    <td><strong>MinGW</strong></td>
+                    <td>Windows</td>
+                    <td>Free & Open Source</td>
+                    <td>Free</td>
+                    <td>Windows, GCC compatible</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="compiler-grid">
+            <div class="compiler-card">
+                <h2>GCC (GNU Compiler Collection)</h2>
+                <p class="platform">Linux, Windows (MinGW), macOS</p>
+                <p>The most widely used open-source C compiler. Industry standard for Linux development.</p>
+
+                <div class="install-section">
+                    <h3>Installation:</h3>
+                    <div class="code-block">
+# Linux (Ubuntu/Debian)
+sudo apt-get install gcc
+
+# macOS (Homebrew)
+brew install gcc
+
+# Windows (MinGW)
+Download from mingw-w64.org
+                    </div>
+                </div>
+
+                <div class="install-section">
+                    <h3>Usage:</h3>
+                    <div class="code-block">gcc program.c -o program
+./program</div>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Advantages</h4>
+                        <ul>
+                            <li>Free and open source</li>
+                            <li>Cross-platform support</li>
+                            <li>Excellent for education</li>
+                            <li>Well-documented</li>
+                            <li>Industry standard</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Disadvantages</h4>
+                        <ul>
+                            <li>Larger binary files</li>
+                            <li>Slower compilation</li>
+                            <li>Complex error messages</li>
+                            <li>More verbose output</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="compiler-card">
+                <h2>Clang (LLVM)</h2>
+                <p class="platform">Linux, Windows, macOS</p>
+                <p>Modern compiler framework with excellent error diagnostics and better performance.</p>
+
+                <div class="install-section">
+                    <h3>Installation:</h3>
+                    <div class="code-block">
+# Linux (Ubuntu/Debian)
+sudo apt-get install clang
+
+# macOS (comes with Xcode)
+xcode-select --install
+
+# Windows
+Download from llvm.org
+                    </div>
+                </div>
+
+                <div class="install-section">
+                    <h3>Usage:</h3>
+                    <div class="code-block">clang program.c -o program
+./program</div>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Advantages</h4>
+                        <ul>
+                            <li>Better error messages</li>
+                            <li>Faster compilation</li>
+                            <li>Smaller binaries</li>
+                            <li>Modern codebase</li>
+                            <li>Modular design</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Disadvantages</h4>
+                        <ul>
+                            <li>Less widely used</li>
+                            <li>Smaller community</li>
+                            <li>Newer tooling</li>
+                            <li>Fewer tutorials available</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="compiler-card">
+                <h2>MSVC (Microsoft Visual C++)</h2>
+                <p class="platform">Windows only</p>
+                <p>Microsoft's compiler, included with Visual Studio. Excellent IDE integration.</p>
+
+                <div class="install-section">
+                    <h3>Installation:</h3>
+                    <div class="code-block">
+Download Visual Studio Community:
+https://visualstudio.microsoft.com/
+Select "Desktop development with C++"
+                    </div>
+                </div>
+
+                <div class="install-section">
+                    <h3>Usage:</h3>
+                    <div class="code-block">cl program.c
+program.exe</div>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Advantages</h4>
+                        <ul>
+                            <li>Excellent IDE (Visual Studio)</li>
+                            <li>Windows native</li>
+                            <li>Good debugger</li>
+                            <li>Professional tools</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Disadvantages</h4>
+                        <ul>
+                            <li>Windows only</li>
+                            <li>Heavy/slow IDE</li>
+                            <li>Community edition has limits</li>
+                            <li>Steep learning curve</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="compiler-card">
+                <h2>MinGW (Minimalist GNU for Windows)</h2>
+                <p class="platform">Windows only</p>
+                <p>Port of GCC for Windows. Run GCC on Windows without Cygwin overhead.</p>
+
+                <div class="install-section">
+                    <h3>Installation:</h3>
+                    <div class="code-block">
+Download MinGW-W64:
+https://www.mingw-w64.org/
+Choose your architecture (32 or 64 bit)
+Add to PATH environment variable
+                    </div>
+                </div>
+
+                <div class="install-section">
+                    <h3>Usage:</h3>
+                    <div class="code-block">gcc program.c -o program.exe
+program.exe</div>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Advantages</h4>
+                        <ul>
+                            <li>Free and open source</li>
+                            <li>GCC compatibility</li>
+                            <li>Native Windows support</li>
+                            <li>Lightweight</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Disadvantages</h4>
+                        <ul>
+                            <li>Windows only</li>
+                            <li>Setup can be complex</li>
+                            <li>PATH issues common</li>
+                            <li>Less documentation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Recommendation for K&R Learning:</strong><br>
+            For learning K&R C, use <strong>GCC</strong> or <strong>Clang</strong>. Both are free, cross-platform, and perfectly suited for studying classic C. If you're on Windows, use <strong>MinGW</strong> to get the GCC experience.
+        </div>
+
+        <h2 style="margin-top: 40px; color: #667eea;">Typical Compilation Workflow</h2>
+        <div class="code-block">
+# 1. Write your program
+nano hello.c
+
+# 2. Compile it
+gcc hello.c -o hello
+
+# 3. Run it
+./hello              (Linux/Mac)
+hello.exe            (Windows)
+
+# 4. Flags for better error checking
+gcc -Wall -Wextra -std=c99 hello.c -o hello
+        </div>
+
+        <p style="margin-top: 30px; color: #718096; font-style: italic;">
+            For more information, visit the official documentation of your chosen compiler.
+        </p>
+    </div>
+</body>
+</html>

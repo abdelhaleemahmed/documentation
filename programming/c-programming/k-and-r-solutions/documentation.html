@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K&R C Solutions - Interactive Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --warning: #f6ad55;
+            --danger: #f56565;
+            --dark: #2d3748;
+            --light: #f7fafc;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .chapters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .chapter-card {
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: none;
+            transition: all 0.3s ease;
+        }
+
+        .chapter-card .chapter-body:not(.collapsed) {
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .chapter-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            opacity: 0.9;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            min-width: 20px;
+            display: inline-block;
+            transform: rotate(0deg);
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .chapter-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .chapter-body {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+            padding: 20px;
+        }
+
+        .chapter-body.collapsed {
+            max-height: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: 0 !important;
+            visibility: hidden !important;
+        }
+
+        .program-count {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .program-list {
+            list-style: none;
+        }
+
+        .program-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .program-item:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .program-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .program-meta {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+
+        .badge-chapter {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .badge-page {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        /* Chapter 0 Styling */
+        .chapter-0 {
+            border-top: 4px solid #f6ad55;
+        }
+
+        .chapter-0-header {
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%) !important;
+        }
+
+        .chapter-0-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-section {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f6ad55;
+            transition: all 0.3s ease;
+        }
+
+        .resource-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .resource-section h3 {
+            color: var(--dark);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .resource-link {
+            display: inline-block;
+            color: #f6ad55;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid #f6ad55;
+        }
+
+        .resource-link:hover {
+            color: #ed8936;
+            background: rgba(246, 173, 85, 0.1);
+            border-bottom-color: #ed8936;
+        }
+
+        .resource-description {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .detail-view {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .detail-view.active {
+            display: block;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 0;
+            margin: 0;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #38a169 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metadata-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .metadata-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metadata-value {
+            color: #718096;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        .code-section {
+            margin-top: 30px;
+        }
+
+        .code-section h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        code {
+            color: inherit;
+        }
+
+        code .keyword { color: #63b3ed; font-weight: bold; }
+        code .string { color: #f6ad55; }
+        code .comment { color: #a0aec0; font-style: italic; }
+        code .number { color: #fc8181; }
+        code .function { color: #81e6d9; }
+        code .operator { color: #cbd5e0; }
+        code .default { color: #e2e8f0; }
+
+        .controls-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .controls-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .chapters-container {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 K&R C Solutions</h1>
+            <p class="subtitle">Interactive Documentation with Code Analysis</p>
+            <p style="margin-top: 10px; color: #718096;">90 Complete Solutions | 7 Chapters | Color-Coded Syntax</p>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search by section, title, or coder...">
+            </div>
+            <select id="chapterFilter">
+                <option value="">All Chapters</option>
+                <option value="1">Chapter 1</option>
+                <option value="2">Chapter 2</option>
+                <option value="3">Chapter 3</option>
+                <option value="4">Chapter 4</option>
+                <option value="5">Chapter 5</option>
+                <option value="6">Chapter 6</option>
+                <option value="8">Chapter 8</option>
+            </select>
+            <button class="controls-button" onclick="resetFilters()">Reset Filters</button>
+        </div>
+
+        <div id="chaptersContainer" class="chapters-container"></div>
+
+        <div id="detailView" class="detail-view">
+            <button class="controls-button back-button" onclick="closeDetail()">← Back to Overview</button>
+            <div id="detailContent"></div>
+        </div>
+
+        <footer>
+            <p>K&R C Solutions Documentation | Generated: December 2025</p>
+            <p>Coder: Ahmed Abdel Haleem | Reference: The C Programming Language (2nd Edition)</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data will be injected here
+        const programsData = {"1": [{"coder": "Ahmed abdel haleem", "date": "25-5-2008", "section": "1.1", "title": "Getting started", "page": "7", "code": "/*\nCoder:Ahmed abdel haleem\nDate:25-5-2008\nK&R.\n1.1 Getting started\npage 7*/\n\n#include <stdio.h>\nmain()\n{\n\tprintf(\"Hello world\\n\");\n}", "filepath": "Chapter_01\\1_1\\1_1.c", "filename": "1_1.c"}, {"coder": "ahmed abdel haleem.", "date": "31-5-2008.", "section": "2.1", "title": "Variable Names", "page": "32", "code": "/*\nCoder: ahmed abdel haleem.\ne-mail: ahmedhal@gmail.com\nDate: 31-5-2008.\nK&R: External variables and Scope.\npage: 32 - 33.\n*/\n#include <stdio.h>\n\n#define MAXLINE 1000 /* maximum input line size */\n\n\tint max;\t\t\t\t/* maximum length seen so far */\n\tchar line[MAXLINE]; \t/* current input line */\n\tchar longest[MAXLINE];\t/* longest line saved here */\n\t\n\tint getline(void);\n\tvoid copy(void);\n\t\n/* print longest input line; specialized version */\nmain()\n{\n\tint len;\n\textern int max;\n\textern char longest[];\n\t\n\tmax = 0;\n\twhile ((len = getline()) > 0)\n\t\tif (len > max) {\n\t\t\tmax = len;\n\t\t\tcopy();\n\t\t}\n\tif (max > 0)\t\t/* There was a line */\n\t\tprintf(\"%s\",longest);\n\treturn 0;\n}\n\n/* Get line specialized version */\nint getline(void)\n{\n\tint c,i;\n\textern char line[];\n\t\n\tfor (i = 0; i < MAXLINE-1 && (c = getchar()) != EOF && c != '\\n'; ++i)\n\t\tline[i] = c;\n\tif (c == '\\n') {\n\t\tline[i] = c;\n\t\t++i;\n\t}\n\tline[i] = c;\n\treturn i;\n}\n\n/* Copy: specialized version */\nvoid copy(void)\n{\n\tint i;\n\textern char line[], longest[];\n\t\n\ti = 0;\n\twhile ((longest[i] = line[i]) != '\\0')\n\t\t++i;\n}\n", "filepath": "Chapter_01\\1_10\\1_10.c", "filename": "1_10.c"}, {"coder": "Ahmed abdel haleem", "date": "25-5-2008*", "section": "1.2", "title": "Variables and Arithmetic Expressions", "page": "9", "code": "/*\nCoder:Ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008*\nK&R.\n1.2: variables and arithmetic Expressions.\npage:9\n*/\n#include <stdio.h>\n\n/*Print Fahrenheit-Celsius table\n\tfor fahr = 0, 20, ... 300*/\n\t\nmain()\n{\n\tint fahr, celsius;\n\tint lower, upper, step;\n\t\n\tlower = 0; /*lower limit of temperature table*/\n\tupper = 300; /*upper limit*/\n\tstep = 20; /*step size*/\n\t\n\tfahr = lower;\n\twhile(fahr <= upper){\n\t\tcelsius = 5 * (fahr-32) / 9;\n\t\tprintf(\"%d\\t%d\\n\",fahr,celsius);\n\t\tfahr = fahr + step;\n\t}\n}\n", "filepath": "Chapter_01\\1_2\\1_2.c", "filename": "1_2.c"}, {"coder": "ahmed abdel haleem", "date": "25-5-2008", "section": "1.2", "title": "Variables and Arithmetic Expressions", "page": "12", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008\nK&R.\n1.2: Variables and arithmetic Expressions.\npage: 12\n*/\n#include <stdio.h>\n\n/*print Fahrenheit-Celsius table\n\tfor fahr = 0, 20, ..., 3000; floating-point version */\n\t\nmain()\n{\n\tfloat fahr, celsius;\n\tint lower, upper, step;\n\t\n\tlower = 0; /* lower limit of temperature table */\n\tupper = 300; /* upper limit  */\n\tstep = 20; /* step size */\n\t\n\tfahr = lower;\n\twhile (fahr <= upper) {\n\t\tcelsius = (5.0/9.0) * (fahr - 32.0);\n\t\tprintf (\"%3.0f %6.1f\\n\",fahr, celsius);\n\t\tfahr = fahr + step;\n\t}\n}\n", "filepath": "Chapter_01\\1_2_t2\\1_2.c", "filename": "1_2.c"}, {"coder": "ahmed abdel haleem", "date": "25-5-2008", "section": "1.3", "title": "The For Statement", "page": "13", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008\nK&R.\n1.3: The For statement.\npage: 13\n*/\n\n#include <stdio.h>\n\n/* print Fahrenheit-Celsius table */\nmain(){\n\tint fahr;\n\tfor (fahr =0; fahr <= 300; fahr = fahr + 20)\n\tprintf (\"%3d %6.1f\\n\", fahr, (5.9/9.0) * fahr-32);\n\t\n\treturn 0;\n}\n", "filepath": "Chapter_01\\1_3\\1_3.c", "filename": "1_3.c"}, {"coder": "ahmed abdel haleem", "date": "25-5-2008", "section": "1.5", "title": "Character Input and Output", "page": "16", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008\nK&R.\n1.5.1: File Copying.\npage: 16.\n*/\n#include <stdio.h>\nmain(){\n\tint c;\n\t\n\tc = getchar();\n\twhile (c != EOF){\n\t\tputchar(c);\n\t\tc = getchar();\n\t}\n}\n", "filepath": "Chapter_01\\1_5_1\\1_5_1.c", "filename": "1_5_1.c"}, {"coder": "ahmed abdel haleem", "date": "25-5-2008", "section": "1.5", "title": "Character Input and Output", "page": "17", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008\nK&R.\n1.5.1: File Copying, More Consize Version\npage: 17.\n*/\n#include <stdio.h>\nmain(){\n\tint c;\n\twhile((c = getchar()) != EOF)\n\tputchar(c);\n}\n", "filepath": "Chapter_01\\1_5_1\\1_5_1_MCV.c", "filename": "1_5_1_MCV.c"}, {"coder": "ahmed abdel haleem", "date": "25-5-2008", "section": "1.5", "title": "Character Input and Output", "page": "18", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008\nK&R.\n1.5.2: Character Counting.\npage: 18\n*/\n#include <stdio.h>\n/* Count characters in input; 1st version */\nmain(){\n\tlong nc;\n\t\n\tnc = 0;\n\twhile (getchar() != EOF)\n\t\t++nc;\n\tprintf(\"%ld\\n\", nc);\n}\n", "filepath": "Chapter_01\\1_5_2\\1_5_2-1.c", "filename": "1_5_2-1.c"}, {"coder": "ahmed abdel haleem", "date": "25-5-2008", "section": "1.5", "title": "Character Input and Output", "page": "18", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008\nK&R.\n1.5.2: Character Counting.\npage: 18\n*/\n#include <stdio.h>\n/* Count characters in input; 2nd version */\nmain(){\n\tdouble nc;\n\tfor (nc = 0; getchar() != EOF; ++nc)\n\t;\n\tprintf(\"%.0f\\n\", nc);\n\n}\n", "filepath": "Chapter_01\\1_5_2\\1_5_2-2.c", "filename": "1_5_2-2.c"}, {"coder": "ahmed abdel haleem", "date": "25-5-2008", "section": "1.5", "title": "Character Input and Output", "page": "19", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:25-5-2008\nK&R.\n1.5.3:Line Counting.\npage: 19\n*/\n#include <stdio.h>\n/*\nThe standard library ensures that an input text stream appears as a sequence of lines. each terminated by a newline. Hence, Counting line is just counting newlines.\n*/\n/* Count lines in input */\n\nmain(){\n\tint c, nl;\n\t\n\tnl = 0;\n\twhile ((c = getchar()) != EOF)\n\t\tif ( c == '\\n')\n\t\t\t++nl;\n\tprintf (\"%d\\n\", nl);\n}\n", "filepath": "Chapter_01\\1_5_3\\1_5_3.c", "filename": "1_5_3.c"}, {"coder": "ahmed abdel haleem", "date": "26-5-2008", "section": "1.5", "title": "Character Input and Output", "page": "20", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:26-5-2008\nK&R.\n1.5.4: Word counting.\npage: 20\n*/\n\n#include <stdio.h>\n\n#define IN 1\n#define OUT 0\n\n/* count lines, words, and characters in input */\n\nmain (){\n\tint c,nl,nw,nc, state;\n\t\n\tstate = OUT;\n\tnl = nw = nc = 0;\n\twhile ((c = getchar()) != EOF ){\n\t\tnc++;\n\t\tif (c == '\\n')\n\t\t\tnl++;\n\t\tif (c == ' ' || c == '\\n' || c == '\\t')\n\t\t\tstate = OUT;\n\t\telse if (state == OUT){\n\t\t\tstate = IN;\n\t\t\t++nw;\n\t\t}\n\t}\n\nprintf(\"%d %d %d\\n\",nl , nw, nc);\t\n\n}\n", "filepath": "Chapter_01\\1_5_4\\1_5_4.c", "filename": "1_5_4.c"}, {"coder": "Ahmed abdel haleem", "date": "26-5-2008*", "section": "1.6", "title": "Arrays", "page": "22", "code": "/*\nCoder:Ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:26-5-2008*\nK&R.\n1.6: Arrays.\npage:22\n*/\n#include <stdio.h>\n\n/* Count digits, white space, others */\n\nmain(){\n\tint c,i,nwhite,nother;\n\tint ndigit[10];\n\t\n\tnwhite = nother = 0;\n\tfor (i = 0; i < 10; ++i)\n\t\tndigit[i] = 0;\n\t\t\n\twhile ((c = getchar()) != EOF)\n\t\tif (c >= '0' && c <= '9')\n\t\t\t++ndigit[c-'0'];\n\t\telse if (c == ' ' || c == '\\t' || c == '\\n')\n\t\t\t++nwhite;\n\t\telse\n\t\t\t++nother;\n\t\n\tprintf (\"digits =\");\n\tfor ( i = 0; i< 10; ++i)\n\t\tprintf(\" %d\",ndigit[i]);\n\tprintf (\" , white space = %d, other = %d \\n\",nwhite,nother);\n\n}\n", "filepath": "Chapter_01\\1_6\\1_6.c", "filename": "1_6.c"}, {"coder": "ahmed abdel haleem", "date": "27-5-2008", "section": "1.7", "title": "Functions", "page": "24", "code": "/*\nCoder: ahmed abdel haleem\ne-mail: ahmedhal@gmail.com\nDate:27-5-2008\nK&R.\n1.7: Functions.\npage: 24\n*/\n#include <stdio.h>\n\nint power(int m, int n);\n/* test power function */\nmain()\n{\n\tint i;\n\t\n\tfor (i = 0; i < 10; i++)\n\t\tprintf(\"%d %d %d\\n\", i, power(2,i),power(-3,i));\n\treturn 0;\n}\n\n/* Power: rise base to n-th power; n >= 0 */\nint power(int base, int n)\n{\n\tint i, p;\n\t\n\tp = 1;\n\tfor(i = 1; i <= n; ++i)\n\t\tp = p * base;\n\treturn p;\n}\n", "filepath": "Chapter_01\\1_7\\1_7.c", "filename": "1_7.c"}, {"coder": "Ahmed haleem", "date": "28-5-2008", "section": "1.7", "title": "Functions", "page": "24", "code": "/*\nCoder: Ahmed haleem\ne-mail: ahmedhal@gmail.com\nDate:28-5-2008\nK&R.\n1.9: Character arrays.\npage: 24\n*/\n#include <stdio.h>\n#define MAXLINE 1000\n\nint getline(char line[ ], int maxline);\nvoid copy(char to[], char from[]);\n\n/* Print longest input line */\nmain()\n{\n\tint len;\t\t\t\t/* current line length */\n\tint max;\t\t\t\t/* maximum length seen so far */\n\tchar line[MAXLINE];\t\t/* current input line */\n\tchar longest[MAXLINE];\t/* longest line saved here */\n\t\n\tmax = 0;\n\twhile((len = getline(line, MAXLINE)) > 0)\n\t\tif (len > max){\n\t\t\tmax = len;\n\t\t\tcopy(longest, line);\n\t\t}\n\tif (max > 0)\t\t\t/* There was a line */\n\t\tprintf(\"%s\", longest);\n\t\n\treturn 0;\n}\n\n/* get line: read line into s, return length */\nint getline(char s[], int lim)\n{\n\tint c,i;\n\t\n\tfor(i=0; i<lim-1 && (c = getchar()) != EOF && c != '\\n';++i)\n\t\ts[i] = c;\n\tif (c == '\\n'){\n\t\ts[i] = c;\n\t\t++i;\n\t}\n\t\n\ts[i] = '\\0';\n\treturn i;\n}\n\n/* copy: copy 'from' into 'to' ; assume to is big enough */\nvoid copy(char to[], char from[])\n{\n\tint i;\n\t\n\ti = 0;\n\twhile ((to[i] = from [i]) != '\\0' )\n\t\t++i;\n}\n", "filepath": "Chapter_01\\1_9\\1_9.c", "filename": "1_9.c"}], "2": [{"coder": "ahmed abdel haleem.", "date": "7-6-2008", "section": "2.10", "title": "Assignment Operators and Expressions", "page": "50", "code": "/*\nCoder: ahmed abdel haleem.\ne-mail: ahmedhal@gmail.com\nDate: 7-6-2008\nK&R.\nPage: 50\n*/\n/* bitcount: count 1 bits in x */\n/* Note that we use OCTAL numbering system becaus we need to manipulate bits and we can't use binary!! right. it same that this is normal but .. */\n\nint bitcount(unsigned x)\n{\n\tint b;\n\n\tfor (b = 0; x != 0; x >= 1 )\n\t\tif(x & 01)\n\t\t\tb++;\n\treturn b;\n}\n", "filepath": "Chapter_02\\2_10\\bitcount.c", "filename": "bitcount.c"}, {"coder": "ahmed badel haleem.", "date": "7-6-2008.", "section": "2.11", "title": "Conditional Expressions", "page": "52", "code": "/*\nCoder: ahmed badel haleem.\nDate:7-6-2008.\nK&R.\nPage: 52.\n*/\n/* Some neat tricks with conditional expressions */\nfor (i = 0; i < n; i++)\n\tprintf(\"%6d%c\", a[i], (i%10 = 9 || i==n-1) ? '\\n' : ' ');\n\n/* A newline is printed after every tenth element, and after the n-th. All other elements are followed by one blank. This might look tricky, but it's more compact than the equivalent if-else */\n\nprintf(\"You have %d item%s.\\n\", n, n==1 ? \"\" : \"s\" );\n\n", "filepath": "Chapter_02\\2_11\\Conditional_expression.c", "filename": "Conditional_expression.c"}, {"coder": "Unknown", "date": "5-6-2008", "section": "2.8", "title": "Increment and Decrement Operators", "page": "47", "code": "/*\nsqueeze: delete all c from s.\nk&R.\nPage: 47.\nDate: 5-6-2008\n */\n\n/* THis one depend on the same logic which we use on multiplication table even the NULL character was a NEW LINE in the same place */\nvoid squeeze(char s1[], char s2[])\n{\n\tint i , j,l;\n\n\tfor (l = 0; s2[l] != '\\0'; l++){\n\tfor(i = j = 0; s1[i] != '\\0'; i++){\n\t\tif (s1[i] != s2[l])\n\t\t\ts1[j++] = s1[i];\n\t}\n\ts1[j] = '\\0';\n\t}\n}\n", "filepath": "Chapter_02\\2_8\\squeeze.c", "filename": "squeeze.c"}, {"coder": "Unknown", "date": "5 - 6 - 2008.", "section": "2.9", "title": "Bitwise Operators", "page": "48", "code": "/*\nstrcat: concatenate t to end of s; s must be big enough.\nK&R.\nPage: 48.\nDate: 5 - 6 - 2008.\n*/\n\nvoid strcat(char s[], char t[])\n{\n\tint i, j;\n\t\n\ti = j = 0;\n\twhile (s[i] != '\\0') /* find end of s */\n\t\ti++;\n\twhile ((s[i++] = t[j++]) != '\\0') /* copy t */\n}\n", "filepath": "Chapter_02\\2_8\\strcat.c", "filename": "strcat.c"}, {"coder": "ahmed abdel haleem ahmed.", "date": "6-6-2008.", "section": "Unknown", "title": "Unknown", "page": "49", "code": "/*\nCoder: ahmed abdel haleem ahmed.\ne-mail: ahmedhal@gmail.com\nK&R.\nDate: 6-6-2008.\nPage: 49.\n*/\n\n/* getbits: get n bits of x that beings at position p. We assume that bit position 0 is at the right end and that n and p are sensible positive numbers.  */\nunsigned getbits(unsigned x, int p, int n)\n{\n\treturn (x >> (p+1-n)) & ~(~0 << n);\n}\n", "filepath": "Chapter_02\\2_9\\getbits.c", "filename": "getbits.c"}, {"coder": "ahmed abdel haleem ahmed.", "date": "6-6-2008.", "section": "Unknown", "title": "Unknown", "page": "49", "code": "/*\nCoder: ahmed abdel haleem ahmed.\ne-mail: ahmedhal@gmail.com\nK&R.\nDate: 6-6-2008.\nPage: 49.\n*/\n/*\nGETBITS ANALYSIS; BY: Ahmed abdel  haleem.\n(Note: this is worng i assume bit ZERO at left but K&R assume it is at right,but the calculations is right even you assume it is\nat left an what all we said is valid)\n\n(x = 25; p = 4; n = 3)\n01234567\n00011001\nresult = 6\n_______________________\n(x = 9; p = 4; n = 3)\n01234567\n00001001\nresult = 2\n_______________________\n(x = 7; p = 4; n = 3)\n01234567\n00000111\nresult = 1\n_______________________\n(x = 7; p = 3; n = 4)\n01234567\n00000111\nresult = 1 (wrong result ?.) it gives me 7!!!.\n_______________________\n(x = 7; p = 6; n = 3)\n01234567\n00001111\nresult = 7 (wrong also it gives me ZERO)\n_________________________________________\n(x = 15; p = 6; n = 3)\n01234567\n00001111\nresult = 0 (wrong also it gives me ZERO)\n__________________________________________\n(x = 15; p = 5; n = 3)\n01234567\n00001111\nresult = 7 (wrong also it gives me ONE)\n___________________________________________\n\nIt sames that, we must not give it (p + n) >=8 and aslo (p+1-n < number of decimal digits)\nfor example tha last test (x = 15; p = 5; n = 3) if we set (n = 2) this will satisfy the\nfirst condition but (p + 1 - n) = (5 + 1 - 2) = 4; 15 -> 00001111 so the decimal digits\nare 1111 = 4 digits, which is equal to the previous equation, we will get a wrong result.\n\nHow it works:\nLet us take this example, which it satisfy the condtitions we defined:\n\n(x = 7; p = 4; n = 3)\n01234567\n00000111\nresult = 1\n-----------------------------------------------\na-> x >> (p+1-n) -> x >> 2 (so x = 00000001)\n\nb-> (~0 << n) -> 100; ~(~0 << n) -> 011\n\n(a) & (b) -> 1; (which is the right result).\n.\n*/\n#include<stdio.h>\nunsigned getbits(unsigned x, int p, int n);\n\nmain()\n{\n\tunsigned x = 15; /* 00000111*/\n\tint p = 4;\n\tint n = 3;\n\tint y = 0;\n\n\tprintf(\"x %d\\n\",x);\n\ty = getbits(x,p,n);\n\tprintf(\"value of x %d \\n\",y);\n\n\treturn 0;\n}\n\n/* getbits: get n bits of x that beings at position p. We assume that bit position 0 is at the right end and that n and p are sensible positive numbers.  */\nunsigned getbits(unsigned x, int p, int n)\n{\n\treturn (x >> (p+1-n)) & ~(~0 << n);\n}\n", "filepath": "Chapter_02\\2_9\\test_getbits.c", "filename": "test_getbits.c"}], "3": [{"coder": "ahmed abdel haleem ahmed.", "date": "7-6-2008", "section": "3.1", "title": "Statements and Blocks", "page": "58", "code": "/*\nCoder: ahmed abdel haleem ahmed.\ne-mail: ahmedhal@gmail.com\nDate: 7-6-2008\nK&R.\nPage: 58\n*/\n\n/*binsearch: find x in v[0] <= v[1] <= ... <= v[n-1] */\n\n/* also known as: Comparison searching\n\nDo man 3 binsearch */\n\nint binsearch(int x, int v[], int n)\n{\n\tint low,high,mid;\n\n\tlow = 0;\n\thigh = n -1;\n\twhile(low <= high){\n\t\tmid = (low+high)/2;\n\t\tif(x< v[mid])\n\t\t\thigh = mid -1;\n\t\telse if (x > v[mid])\n\t\t\tlow = mid +1;\n\t\telse\t/*found match*/\n\t\t\treturn mid;\n\t}\n\treturn -1; /* no match */\n}\n", "filepath": "Chapter_03\\3_3\\binsearch.c", "filename": "binsearch.c"}, {"coder": "ahmed abdel halem.", "date": "9 - 6 - 2008.", "section": "3.1", "title": "Statements and Blocks", "page": "58", "code": "/*\nCoder: ahmed abdel halem.\ne-mail: ahmedha@gmail.com\nK&R.\n3.2: Switch\nPage: 58.\nDate: 9 - 6 - 2008.\n*/\n#include<stdio.h>\n\nmain() /* Count digits, white space, others */\n{\n\tint c, i, nwhite, nother, ndigit[10];\n\t\n\tnwhite = nother = 0;\n\tfor (i = 0; i< 10; i++)\n\t\tndigit[i] = 0;\n\twhile ((c = getchar()) != EOF){\n\t\tswitch(c){\n\t\tcase '0': case '1': case: '2': case: '3': case: '4':\n\t\tcase '5': case: '6': case '7': case '8': case '9':\n\t\t\tndigit[c - '0'];\n\t\t\tbreak;\n\t\tcase ' ':\n\t\tcase '\\n':\n\t\tcase '\\t':\n\t\t\tnwhite++;\n\t\t\tbreak;\n\t\tdefault:\n\t\t\tnother++;\n\t\t\tbreak;\n\t\t}\n\t}\n\tprintf(\"digits =\");\n\tfor (i = 0; i < 10; i++ )\n\t\tprintf(\" %d\", ndigit[i]);\n\tprintf(\", white space = %d, other = %d\\n\", nwhite, nother);\n\t\treturn 0;\n}\n", "filepath": "Chapter_03\\3_4\\3_4.c", "filename": "3_4.c"}, {"coder": "ahmed abdel haleem.", "date": "Unknown", "section": "3.4", "title": "Switch", "page": "61", "code": "/*\nCoder: ahmed abdel haleem.\ne-mail: ahmedhal@gmail.com\nK&R.\n3.5: Loops - while and for.\nPage: 61.\n*/\n/* \nThe structure of the program reflects the form of the input:\n\tskip white space, if any\n\tget sign, if any\n\tget integer part and convert it\nEach step does its part, and leaves things in a clean state for the next. The whole process terminates on the first character that could not be part of a number.\n */\n#include <ctype.h>\n\n/* atoi: convert s to integer; version */\nint atoi(char s[])\n{\n\tint i, n ,sign;\n\t\n\tfor (i = 0; isspace(s[i]); i++) /* ski[ white space */\n\t\t;\n\tsign = (s[i] == '-') ? -1 : 1;\n\tif (s[i] == '+' || s[i] == '-') /* Skip sign */\n\t\ti++;\n\tfor (n = 0; isdigit(s[i]); i++)\n\t\tn = 10 * n + (s[i] - '0');\n\treturn sign * n;\n}\n\n/*\nThe standerd library provides a more elaborate function STRTOL for conversion of strings to long integers; see section  of Appendix B.\n*/\n", "filepath": "Chapter_03\\3_5\\3_5_atoi.c", "filename": "3_5_atoi.c"}, {"coder": "ahmed abdel haleem.", "date": "Unknown", "section": "3.5", "title": "Loops - While and For", "page": "62", "code": "/*\nCoder: ahmed abdel haleem.\ne-mail: ahmedhal@gmail.com.\nk&R.\n3.5: Loops - While and For.(comma operator)\nPage: 62.\n*/\n#include <string.h>\n/* reverse: reverse string s in place */\nvoid reverse (char s[])\n{\n\tint c, i, j;\n\t\n\tfor (i = 0, j = strlen(s)-1; i < j; i++, j--){\n\t\tc = s[i];\n\t\ts[i] = s[j];\n\t\ts[j] = c;\n\t}\n}\n", "filepath": "Chapter_03\\3_5\\3_5_comma_operator.c", "filename": "3_5_comma_operator.c"}, {"coder": "ahmed abdel haleem.", "date": "Unknown", "section": "3.5", "title": "Loops - While and For", "page": "62", "code": "/*\nCoder: ahmed abdel haleem.\ne-mail:ahmedhal@gmail.com.\nK&R.\n3.5: Loops - While and For.\nPage: 62.\n*/\n\n/*\nThe following function is a Shell sort for sorting an array of integers. The basic idea of this sorting algorithm, which was invented\nin 1959 by D.I. Shell, is that in early stages, far-apart elements are compared, rather than adjacent ones as in simpler interchanges\nsorts. This tends to eliminate large amounts of disorder quickly, so later stages have less work to do. The interval between compared\nelements is gradually decreased to one, at which point the sort effectively becomes an adjacent interchange method.\n*/\n\n/* shellsort: sort v[0]  ... v[n-1] into increasing order*/\nvoid shellsort(int v[], int n)\n{\n\tint gap, i, j, temp;\n\n\tfor (gap = n/2; gap > 0; gap /= 2)\n\t\tfor (j=i-gap; j>=0 && v[j]>v[j+gap]; j-=gap){\n\t\t\ttemp = v[j];\n\t\t\tv[j] = v[j+gap];\n\t\t\tv[j+gap] = temp;\n\t\t}\n}\n", "filepath": "Chapter_03\\3_5\\3_5_shell_sort.c", "filename": "3_5_shell_sort.c"}, {"coder": "ahmed abdel halem.", "date": "10 - 6 - 2008.", "section": "3.7", "title": "Break and Continue", "page": "64", "code": "/*\nCoder: ahmed abdel halem.\ne-mail: ahmedha@gmail.com\nK&R.\n3.6: Loops - Do-while.\nPage:64.\nDate: 10 - 6 - 2008.\n*/\n/* itoa: convert n to characters in s */\n\nvoid itoa(int n, char [])\n{\n\tint i, sign;\n\t\n\tif((sign = n) < 0) /* record sign */\n\t\tn = -n;\t\t\t/* make n positive */\n\ti = 0;\n\tdo {\t\t\t\t/* generate digits in reverse order */\n\t\ts[i++] = n % 10 + '0';\t/* get next digit */\n\t} while ((n /= 10) > 0); /* delete it */\n\t\n\tif(sogn < 0)\n\t\ts[i++] = '-';\n\ts[i] = '\\0';\n\treverse(s);\n}\n\n/* \nFunction itoa, which converts a number to a character string (the inverse of atoi). The job is slightly more complectaed than might be though at first, because the easy methods of generating the digits generate them in the wrong order.\n We have chosen to generate the string backwards, then reverse it.\n */\n", "filepath": "Chapter_03\\3_6\\3_6_loops_do_while.c", "filename": "3_6_loops_do_while.c"}, {"coder": "ahmed abdel halem.", "date": "11 - 6 - 2008.", "section": "3.7", "title": "Break and Continue", "page": "64", "code": "/*\nCoder: ahmed abdel halem.\ne-mail: ahmedha@gmail.com\nK&R.\n3.7: Break and continue.\nPage:64.\nDate: 11 - 6 - 2008.\n*/\n/* trim: remove trailing blanks, tabs, newlines */\nint trim(char [])\n{\n\tint n;\n\t\n\tfor (n = strlen(s)-1; n >= 0; n-- )\n\t\tif (s[n] != ' ' && s[n] != '\\t' && s[n] != '\\n')\n\t\t\tbreak;\n\t\ts[n+1] = '\\0';\n\t\treturn n;\n}\n", "filepath": "Chapter_03\\3_7\\3_7.c", "filename": "3_7.c"}], "4": [{"coder": "ahmed abdel haleem.", "date": "13 - 06 - 2008.", "section": "4.1", "title": "Basics of Functions", "page": "69", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n4.1: Basics of Functions.\nPage: 69\nDate: 13 - 06 - 2008.\n*/\n\n#include <stdio.h>\n#define MAXLINE 100\n\nint getline(char line[], int max);\nint strindex(char source[], char searchfor[]);\n\nchar pattern[] = \"ould\"; /* Pattern to search for */\n\n/* find all lines matching pattern */\nmain()\n{\n\tchar line[MAXLINE];\n\tint found = 0;\n\t\n\twhile (getline(line, MAXLINE) > 0)\n\t\tif (strindex(line, pattern) >= 0) {\n\t\t\tprintf(\"%s\", line);\n\t\t\tfound++;\n\t\t}\n\t\n\treturn found;\n}\n\n/* getline: get line into s, return length */\nint getline(char s[], int lim)\n{\n\tint c,i;\n\t\n\ti = 0;\n\twhile(--lim > 0 && (c = getchar()) != EOF && c != '\\n')\n\t\ts[i++] = c;\n\tif ( c == '\\n')\n\t\ts[i++] = c;\n\ts[i] = '\\0';\n\treturn i;\n}\n\n/* strindex: return index of t in s, -1 if none */\nint strindex(char s[], char t[])\n{\n\tint i, j, k;\n\t\n\tfor(i = 0; s[i] != '\\0'; i++){\n\t\tfor(j=i, k=0; t[k]!='\\0' && s[j]==t[k]; j++, k++)\n\t\t\t;\n\t\tif( k> 0 && t[k] == '\\0')\n\t\t\treturn i;\n\t}\n\treturn -1;\n}\n", "filepath": "Chapter_04\\4_1\\4_1.c", "filename": "4_1.c"}, {"coder": "ahmed abdel haleem.", "date": "19 - 06 - 2008.", "section": "4.10", "title": "Recursion", "page": "87", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n4.10: Recursion.\nPage: 87.\nDate: 19 - 06 - 2008.\n*/\n\n#include <stdio.h>\n\n/* printd: priont n in decimal */\nvoid printd(int n)\n{\n\tif (n < 0){\n\t\tputchar('-');\n\t\tn = -n;\n\t}\n\tif (n / 10)\n\t\tprintd(n / 10);\n\tputchar(n % 10 + '0');\n}\n", "filepath": "Chapter_04\\4_10\\5_10_printd.c", "filename": "5_10_printd.c"}, {"coder": "ahmed abdel haleem.", "date": "19 - 06 - 2008.", "section": "4.10", "title": "Recursion", "page": "87", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n4.10: Recursion.\nPage: 87 - 88.\nDate: 19 - 06 - 2008.\n*/\n/* Another good example of recursion is quicksort., a sorting algorithm developed by C. A. R. Hoare in 1962. Given an array, one element is chosen and the others are paritioned into two subsets - those less than the partition \nelement and those greater than or equal to it. The same process is then applied recursively to the two subsets. When a subset has fewer than two elements, it doesn't need any sorting; this stops the recursion\n */\n\n /* qsort: sort v[left] . . . v[right] into increasing order */\n void qsort(int v[], int left, int right)\n {\n\tint i, last;\n\tvoid swap(int v[], int left, int right);\n\t\n\tif (left >= right)\t\t/* do nothing if array contains */\n\t\treturn;\t\t\t\t/* fewer than two elements */\n\tswap(v, left, (left+right)/2);\t/* move partition element */\n\tlast = left;\t\t\t\t\t/* to v[0] ( we sort base on this one)  */\n\tfor (i = left + 1; i <= right; i++)\t/* partition */\n\t\tif (v[i] < v[left])\n\t\t\tswap (v, ++last, i);\n\tswap (v, left, last);\t\t\t/* restore partition elem */\n\tqsort(v, left, last-1);\n\tqsort(v, last+1, right);\n }\n \n /* swap: interchange v[i] and v[j] */\n void swap(int v[], int i, int j)\n {\n\tint temp;\n\t\n\ttemp = v[i];\n\tv[i] = v[j];\n\tv[j] = temp;\n }\n", "filepath": "Chapter_04\\4_10\\5_10_qsort.c", "filename": "5_10_qsort.c"}, {"coder": "ahmed abdel haleem.", "date": "15 - 06 - 2008.", "section": "4.2", "title": "Functions Returning Non-integers", "page": "71", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n4.2: Functions Returning Non-integers.\nPage: 71\nDate: 15 - 06 - 2008.\n*/\n#include <stdio.h>\n\n/* atof: convert string s to double */\ndouble atof(char s[])\n{\n\tdouble val, power;\n\tint i, sign;\n\t\n\tfor (i = 0; isspace(s[i]); i++) /* Skip white space */ /* ( 1 ) */\n\t\t;\n\tsign = (s[i] == '-') ? -1 : 1;\n\tif (s[i] == '+'; || s[i] == '-') /* ( 3 ) */\n\t\ti++;\n\tfor(val = 0.0; isdigit(s[i]); i++)\n\t\tval = 10.0 * val + (s[i] - '0');;\n\tif (s[i] = '.') \t\t\t\t\t\t/*  ( 4 )  */\n\t\ti++;\n\tfor ( power = 1.0; isdigit(s[i]); i++){\n\t\tval = 10.0 * val + (s[i] - '0');\n\t\tpower *= 10.0;\n\t}\n\treturn sign * val / power;\n}\n", "filepath": "Chapter_04\\4_2\\4_2.c", "filename": "4_2.c"}, {"coder": "ahmed abdel haleem.", "date": "15 - 06 - 2008.", "section": "4.3", "title": "External Variables", "page": "76", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n4.3: External variables.\nPage: 76\nDate: 15 - 06 - 2008.\n*/\n#include <stdio.h>\n#include <stdlib.h>\t\t/* for atof( )  */\n# include <ctype.h>\n\n#define MAXOP 100 /* max size of operand or operator */\n#define NUMBER '0' /* signal that a number was found */\n\nint getopt(char []);\nvoid push(double);\ndouble pop(void);\nint getch(void);\nvoid ungetch(int);\n\n/* reverse Polish calculator */\nmain()\n{\n\tint type;\n\tdouble op2;\n\tchar s[MAXOP];\n\t\n\twhile ((type = getop(s)) != EOF){\n\t\tswitch (type){\n\t\tcase NUMBER:\n\t\t\tpush(atof(s));\n\t\t\tbreak;\n\t\tcase '+':\n\t\t\tpush(pop() + pop());\n\t\t\tbreak;\n\t\tcase '*':\n\t\t\tpush(pop() * pop());\n\t\t\tbreak;\n\t\tcase '-':\n\t\t\top2 = pop();\n\t\t\tpush(pop() - op2);\n\t\t\tbreak;\n\t\tcase '/':\n\t\t\top2 = pop();\n\t\t\tif (op2 != 0.0)\n\t\t\t\tpush(pop() / op2);\n\t\t\telse\n\t\t\t\tprintf(\"error: zero divisor\\n\");\n\t\t\tbreak;\n\t\tcase '\\n':\n\t\t\tprintf(\"\\t%.8g\\n\", pop());\n\t\t\tbreak;\n\t\tdefaut:\n\t\t\tprintf(\"error: unknown command %s \\n\");\n\t\t\tbreak;\n\t\t}\n\t}\n\treturn 0;\n}\n\n#define MAXVAL 100 /* maximum depth of val stack */\n\nint sp = 0;\t\t\t/* next free stack position */\ndouble val[MAXVAL]; /* value stack */\n\n/* push: push f onto value stack */\nvoid push(double f)\n{\n\tif (sp < MAXVAL)\n\t\tval[sp++] = f;\n\telse\n\t\tprintf(\"error: stack full, can't push %g\\n\",f);\n}\n\n/* pop: pop and return top value from stack */\ndouble pop(void)\n{\n\tif(sp > 0)\n\t\treturn val[--sp];\n\telse{\n\t\tprintf(\"error: stack empty\\n\");\n\t\treturn 0.0;\n\t}\n}\n\n/* getop: get next operator or numeric operand  */\nint getop(char s[])\n{\n\tint i,c;\n\t\n\twhile ((s[0] = c = getch()) == ' ' || c == '\\t')\n\t\t;\n\ts[1] = '\\0';\n\tif (!isdigit(c) && c != '.')\n\t\treturn c; /* not a number */\n\ti = 0;\n\tif(isdigit(c)) /* collect integer part */\n\t\twhile (isdigit(s[++i] = c = getch()))\n\t\t\t;\n\tif (c == '.') /* collect fraction part */\n\t\twhile(isdigit(s[++i] = c = getch()))\n\t\t\t;\n\ts[i] = '\\0';\n\tif (c != EOF)\n\t\tungetch(c);\n\treturn NUMBER;\n}\n\n# define BUFSIZE 100\n\nchar buf[BUFSIZE]; /* buffer for ungetch */\nint bufp = 0;\t   /* next free position in buf */\n\nint getch(void) /* get a (possibly pushed back) character */\n{\n\treturn (bufp > 0) ? buf[--bufp] : getchar();\n}\n\nvoid ungetch(int c) /* push character back on input */\n{\n\tif (bufp >= BUFSIZE)\n\t\tprintf(\"ungetch: too many characters\\n\");\n\telse\n\t\tbuf[bufp++] = c;\n}\n", "filepath": "Chapter_04\\4_3\\4_3_reverse_Polish_calculator.c", "filename": "4_3_reverse_Polish_calculator.c"}], "5": [{"coder": "ahmed abdel haleem.", "date": "19 - 06 - 2008.", "section": "5.10", "title": "Command-line Arguments", "page": "119", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.10: Command-line Arguments.\nPage: 119.\nDate: 19 - 06 - 2008.\n*/\n#include <stdio.h>\n#include <string.h>\n#include <stdlib.h>\n\n#define MAXLINES 5000\t\t\t/* max #lines to be sorted */\n#define MAXLEN 1000 \t\t\t/* max length of any input line */\n#define ALLOCSIZE 10000 \t\t/* size of available space */\n\nchar *lineptr[MAXLINES];\t\t/* pointers to text lines */\nint readlines(char *lineptr[], int nlines);\nvoid writelines(char *lineptr[], int nlines);\nvoid mqsort(void *lineptr[], int left, int right, int (*comp)(void *, void *));\nint numcmp(char *, char *);\nstatic char allocbuf[ALLOCSIZE]; /* storage for alloc  */\nstatic char *allocp = allocbuf; /* next free position */\nchar *alloc(int);\n\n/* sort input lines */\nmain(int argc, char *argv[])\n{\n\tint nlines;\t\t\t/* number of input lines  read*/\n\tint numeric = 0;\t/* 1 if numeric sort */\n\t\n\tif (argc > 1 && strcmp(argv[1], \"-n\") == 0)\n\t\tnumeric = 1;\n\tif ((nlines = readlines(lineptr, MAXLINES)) >= 0){\n\t\tmqsort((void **) lineptr, 0, nlines-1, (int (*)(void *, void *))(numeric ? numcmp : strcmp));\n\t\twritelines(lineptr, nlines);\n\t\treturn 0;\n\t} else {\n\t\tprintf(\"input too big to sort\\n\");\n\t\treturn 1;\n\t}\n}\n\n/* Readlines: readinput lines */\nint readlines(char *lineptr[], int maxlines)\n{\n\tint len, nlines;\n\tchar *p, line[MAXLEN];\n\t\n\tnlines = 0;\n\twhile((len = getline(line, MAXLEN)) > 0)\n\t\tif (nlines >= maxlines || (p = alloc(len)) == NULL)\n\t\t\treturn -1;\n\t\telse {\n\t\t\tline[len -1] = '\\0'; /* delete newline */\n\t\t\tstrcpy(p, line);\n\t\t\tlineptr[nlines++] = p;\n\t\t}\n\treturn nlines;\n}\n\nchar *alloc(int n) /* return pointer to n characters */\n{\n\tif (allocbuf + ALLOCSIZE - allocp >= n) { /* It fits */\n\t\tallocp += n;\n\t\treturn allocp -n; /* pld p */\n\t}else /* not enough room */\n\t\treturn 0;\n}\n\n/* writelines: write output lines */\nvoid writelines(char *lineptr[], int nlines)\n{\n\tint i;\n\t\n\tfor (i = 0; i < nlines; i++)\n\t\tprintf(\"%s\\n\", lineptr[i]);\n}\n/*\nOR YOU CAN WRIT IT AS:\n Writelines: write output lines.\nvoid writelines(char *lineptr[], int nlines)\n{\n\twhile (nlines-- > 0)\n\t\tprintf(\"%s\\n\", *lineptr++);\n}\n*/\n\n/* getline: read line into s, return length, (from section 1.9) */\nint getline(char s[], int lim)\n{\n\tint c,i;\n\t\n\tfor(i=0; i<lim-1 && (c = getchar()) != EOF && c != '\\n';++i)\n\t\ts[i] = c;\n\tif (c == '\\n'){\n\t\ts[i++] = c;\n\t}\n\t\n\ts[i] = '\\0';\n\treturn i;\n}\n\n/* qsort: sort v[left] ... v[right] into increasing order  */\nvoid mqsort(void *v[], int left, int right, int (*comp)(void *, void *))\n{\n\tint i, last;\n\tvoid swap(void *v[], int , int);\n\t\n\tif(left >= right)\t\t\t/* Do nothing if array contains fewer than two elements */\n\t\treturn;\n\tswap(v, left, (left + right)/2);\n\tlast = left;\n\tfor (i = left+1; i <= right; i++)\n\t\tif ((*comp)(v[i], v[left]) < 0)\n\t\t\tswap(v, ++last, i);\n\tswap (v, left, last);\n\tqsort(v, left, last-1, comp);\n\tqsort(v, last+1, right, comp);\n}\n\n/* numcmp: compare s1 and s2 numerically */\nint numcmp(char *s1, char *s2)\n{\n\tdouble v1, v2;\n\t\n\tv1 = atof(s1);\n\tv2 = atof(s2);\n\tif (v1 < v2)\n\t\treturn -1;\n\telse if (v1 > v2)\n\t\treturn 1;\n\telse\n\t\treturn 0;\n/* Can we write this using switch */\n}\n\n\nvoid swap(void *v[], int i, int j)\n{\n\tvoid *temp;\n\t\n\ttemp = v[i];\n\tv[i] = v[j];\n\tv[j] = temp;\n}\n", "filepath": "Chapter_05\\5_11\\5_11_sort_v2.c", "filename": "5_11_sort_v2.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "97", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.2: Pointers and Function Arguments.\nPage: 97\nDate: 18 - 06 - 2008.\n*/\n#include <ctype.h>\n\nint getch(void);\nvoid ungetch(int);\n\n/* getint: get next integer from input into *np */\nint getint(int *np)\n{\n\tint c, sign;\n\t\n\twhile(isspace(c = getchar())) /* Skip white space */\n\t\t;\n\tif (!isdigit(c) && c != EOF && c != '+' && c != '-'){\n\t\tungetch(c);\t/* it's not a number  */\n\t\treturn 0;\n\t}\n\t\n\tsign = (c == '-') ? -1 : 1;\n\tif (c == '+' || c = '-')\n\t\tc = getch();\n\tfor (*np = 0; isdigit(c); c = getch())\n\t\t*np = 10 * *np + (c - '0'); /* ( 10 * *np)  this to read numbers like 132, we read one but if there is another number that means what we read was 10, if there is another number then we read 100 and so on  */\n\t*np *= sign;\n\tif (c != EOF)\n\t\tungetch(c);\n\treturn c;\n}\n\n/*\n\tHow to call it:\n\tint n, array[SIZE], getint(int *) ;\n\t\n\tfor ( n = 0; n < SIZE && getint(&array[n]) != EOF; n++)\n\t\t;\n*/\n", "filepath": "Chapter_05\\5_2\\5_2_getint.c", "filename": "5_2_getint.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "99", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.3: Pointers and Arrays.\nPage: 99\nDate: 18 - 06 - 2008.\n*/\n\n/* strlen: return length of string. */\n\nint strlen(char *s){\n\tint n;\n\t\n\tfor (n = 0; *s != '\\0'; s++)\n\t\tn++;\n\treturn n;\n}\n", "filepath": "Chapter_05\\5_3\\5_3.c", "filename": "5_3.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "101", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.4: Address Arithmetic.\nPage: 101\nDate: 18 - 06 - 2008.\n*/\n\n#define ALLOCSIZE 10000 /* size of available space */\n\nstatic char allocbuf[ALLOCSIZE]; /* storage for alloc  */\nstatic char *allocp = allocbuf; /* next free position */\n\nchar *alloc(int n) /* return pointer to n characters */\n{\n\tif (allocbuf + ALLOCSIZE - allocp >= n) { /* It fits */\n\t\tallocp += n;\n\t\treturn allocp -n; /* pld p */\n\t}else /* not enough room */\n\t\treturn 0;\n}\n\nvoid afree(char *p) /* free storage pointed to by p */\n{\n\tif (p >= allocbuf && p < allocbuf + ALLOCSIZE)\n\t\tallocp = p;\n}\n", "filepath": "Chapter_05\\5_4\\5_4_malloc_free.c", "filename": "5_4_malloc_free.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "101", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.4: Address Arithmetic.\nPage: 101\nDate: 18 - 06 - 2008.\n*/\n/* Version of strlen depend on pointers arithmetic facts  */\n\n/* strlen: return length of string s */\n\nint strlen()\n{\n\tchar *p = s;\n\t\n\twhile (*p != '\\0')\n\t\tp++;\n\treturn p - s;\n}\n", "filepath": "Chapter_05\\5_4\\5_4_strlen.c", "filename": "5_4_strlen.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "106", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.5: Character Pointers and Functions.\nPage: 106\nDate: 18 - 06 - 2008.\n*/\n\n/* strcmp: return <0 if s<t, 0 if s==t, >0 if s>t */\nint strcmp(char *s, char *t)\n{\n\tfor ( ; *s == *t; s++, t++)\n\t\tif (*s == '\\0')\n\t\t\treturn 0;\n\treturn *s - *t;\n}\n", "filepath": "Chapter_05\\5_5\\5_5_strcmp_pointer_version.c", "filename": "5_5_strcmp_pointer_version.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "106", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.5: Character Pointers and Functions.\nPage: 106\nDate: 18 - 06 - 2008.\n*/\n/* strcmp: return <0 if s<t, 0 if s==t, >0 if s>t */\nint strcmp (char *s, char *t)\n{\n\tint i;\n\t\n\tfor ( i = 0;s[i] == t[i]; i++ )\n\t\tif (s[i] == '\\0')\n\t\t\treturn 0;\n\treturn s[i] - t[i];\n}\n", "filepath": "Chapter_05\\5_5\\5_5_strcmp_subscript_version.c", "filename": "5_5_strcmp_subscript_version.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "105", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.5: Character Pointers and Functions.\nPage: 105\nDate: 18 - 06 - 2008.\n*/\n\n/* strcpy: copy t to s; pointer version 1 */\nvoid strcpy(char *s, char *t)\n{\n\twhile ((*s = *t) != '\\0'){\n\t\ts++;\n\t\tt++;\n\t}\n}\n", "filepath": "Chapter_05\\5_5\\5_5_strcpy_pointer_version_1.c", "filename": "5_5_strcpy_pointer_version_1.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "105", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.5: Character Pointers and Functions.\nPage: 105\nDate: 18 - 06 - 2008.\n*/\n\n/* strcpy: copy t to s; pointer version 2 */\nvoid strcpy(char *s, char *t)\n{\n\twhile((*s++ = *t++) != '\\0')\n}\n", "filepath": "Chapter_05\\5_5\\5_5_strcpy_pointer_version_2.c", "filename": "5_5_strcpy_pointer_version_2.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "106", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.5: Character Pointers and Functions.\nPage: 106\nDate: 18 - 06 - 2008.\n*/\n/* strcpy: copy t to s; pointer version 3 */\nvoid strcpy(char *s, char *t)\n{\n\twhile(*s++ = *t++) /* note the difference between *s++ and (*s)++  */\n\t\t;\n}\n", "filepath": "Chapter_05\\5_5\\5_5_strcpy_pointer_version_3.c", "filename": "5_5_strcpy_pointer_version_3.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "105", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.5: Character Pointers and Functions.\nPage: 105\nDate: 18 - 06 - 2008.\n*/\n/* strcpy: copy t to s; array subscript version */\nvoid strcpy()\n{\n\tint i;\n\t\n\ti = 0;\n\twhile((s[i] = t[i]) != '\\0')\n\t\ti++;\n}\n", "filepath": "Chapter_05\\5_5\\5_5_strcpy_subscript_version.c", "filename": "5_5_strcpy_subscript_version.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "5.5", "title": "Character Pointers and Functions", "page": "107", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.6: Pointers arrays; Pointers to Pointers.\nPage: 107 - 110.\nDate: 18 - 06 - 2008.\n*/\n\n/* A program that will sort a set of text lines into alphabetic order, a stripped-down version of the UNIX program sort */\n\n/* The sorting process has three steps:\n\t1- Read all the lines of input.\n\t2- Sort them.\n\t3- Print them in order.\n*/\n#include <stdio.h>\n#include <string.h>\n\n#define MAXLINES 5000\t\t/* max #lines to be sorted  */\n\nchar *lineptr[MAXLINES];\t/* Pointers to text lines */\n\nint readlines(char *lineptr[], int nlines);\nvoid writelines(char *lineptr[], int nlines);\n\nvoid qsort(char *lineptr[], int left, int right);\n\n/* Sort input lines */\nmain()\n{\n\tint nlines;\t\t/* number of input lines read */\n\t\n\tif((nlines = readlines(lineptr, MAXLINES)) >= 0){\n\t\tqsort(lineptr, 0, nlines-1);\n\t\twritelines(lineptr, nlines);\n\t\treturn 0;\n\t}else {\n\t\tprintf(\"error: input too big to sort\\n\");\n\t\treturn 1;\n\t}\n}\n\n\n#define MAXLEN 1000 /* max length of any input line */\nint getline(char [], int);\n\n#define ALLOCSIZE 10000 /* size of available space */\n\nstatic char allocbuf[ALLOCSIZE]; /* storage for alloc  */\nstatic char *allocp = allocbuf; /* next free position */\nchar *alloc(int);\n\n/* Readlines: readinput lines */\nint readlines(char *lineptr[], int maxlines)\n{\n\tint len, nlines;\n\tchar *p, line[MAXLEN];\n\t\n\tnlines = 0;\n\twhile((len = getline(line, MAXLEN)) > 0)\n\t\tif (nlines >= maxlines || (p = alloc(len)) == NULL)\n\t\t\treturn -1;\n\t\telse {\n\t\t\tline[len -1] = '\\0'; /* delete newline */\n\t\t\tstrcpy(p, line);\n\t\t\tlineptr[nlines++] = p;\n\t\t}\n\treturn nlines;\n}\n\nchar *alloc(int n) /* return pointer to n characters */\n{\n\tif (allocbuf + ALLOCSIZE - allocp >= n) { /* It fits */\n\t\tallocp += n;\n\t\treturn allocp -n; /* pld p */\n\t}else /* not enough room */\n\t\treturn 0;\n}\n\n/* writelines: write output lines */\nvoid writelines(char *lineptr[], int nlines)\n{\n\tint i;\n\t\n\tfor (i = 0; i < nlines; i++)\n\t\tprintf(\"%s\\n\", lineptr[i]);\n}\n/*\nOR YOU CAN WRIT IT AS:\n Writelines: write output lines.\nvoid writelines(char *lineptr[], int nlines)\n{\n\twhile (nlines-- > 0)\n\t\tprintf(\"%s\\n\", *lineptr++);\n}\n*/\n\n/* getline: read line into s, return length, (from section 1.9) */\nint getline(char s[], int lim)\n{\n\tint c,i;\n\t\n\tfor(i=0; i<lim-1 && (c = getchar()) != EOF && c != '\\n';++i)\n\t\ts[i] = c;\n\tif (c == '\\n'){\n\t\ts[i++] = c;\n\t}\n\t\n\ts[i] = '\\0';\n\treturn i;\n}\n\n/* qsort: sort v[left] ... v[right] int increasing order */\nvoid qsort(char *v[], int left, int right)\n{\n\tint i, last;\n\tvoid swap(char *v[], int i, int j);\n\t\n\tif(left >= right)\t\t\t/* do nothing if array contains fewer than two elements */\n\t\treturn;\n\tswap(v, left, (right + left)/2);\n\tlast = left;\n\tfor (i = left+1; i <= right; i++)\n\t\tif (strcmp(v[i], v[left]) < 0)\n\t\t\tswap(v, ++last, i);\n\tswap(v, left, last);\n\tqsort(v, left, last-1);\n\tqsort(v, last+1, right);\n}\n\n/* swap: interchange v[i] and v[j]  */\nvoid swap(char *v[], int i, int j)\n{\n\tchar *temp;\n\t\n\ttemp = v[i];\n\tv[i] = v[j];\n\tv[j] = temp;\n}\n", "filepath": "Chapter_05\\5_6\\5_6_minimal_(sort).c", "filename": "5_6_minimal_(sort).c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "111", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.7: Multi-dimensional Arrays\nPage: 111\nDate: 18 - 06 - 2008.\n*/\n\n/* Year to day and day to year conversion */\n\nstatic char daytab[2][13] = {\n\t{0, 31, 28, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30},\n\t{0, 31, 28, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30}\n};\n\n/* day_of_year: set day of year from month & day */\nint day_of_year(int year, int month, int day)\n{\n\tint i, leap;\n\t\n\tleap = year%4 == 0 && year%100 != 0 || year%400 == 0;\n\tfor (i = 1; i < month; i++)\n\t\tday += daytab[leap][i];\n\treturn day;\n}\n\n/* month_day: set month, day from day of year  */\nvoid month_day(int year, int yearday, int *pmonth, int * pda)\n{\n\tint i, leap;\n\t\n\tleap = year%4 == 0 && year%100 != 0 || year%400 == 0;\n\tfor ( i = 1; yearday > daytab[leap][i]; i++)\n\t\tyearday -= daytab[leap][i];\n\t*pmonth = i;\n\t*pday = yearday;\n}\n", "filepath": "Chapter_05\\5_7\\5_7_code_fragments.c", "filename": "5_7_code_fragments.c"}, {"coder": "ahmed abdel haleem.", "date": "18 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "113", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n5.8: Initialization of Pointer Arrays.\nPage: 113.\nDate: 18 - 06 - 2008.\n*/\n\n/* month_name: return name of n-th month */\nchar *month_name()\n{\n\tstatic char *name[] = {\n\t\"Illegal month\",\n\t\"January\", \"February\", \"March\",\n\t\"April\", \"May\", \"June\",\n\t\"July\", \"August\", \"September\",\n\t\"October\", \"November\", \"December\"\n\t};\n\t\n\treturn (n < 1 || n > 12) ? name[0] : name[n]; /* <--- Nice Code !!! */\n}\n", "filepath": "Chapter_05\\5_8\\5_8_Code_fragments.c", "filename": "5_8_Code_fragments.c"}], "6": [{"coder": "ahmed abdel haleem.", "date": "19 - 06 - 2008.", "section": "Unknown", "title": "Unknown", "page": "132", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n6.3: Arrays of structures.\nPage: 132.\nDate: 19 - 06 - 2008.\n*/\n#include <stdio.h>\n#include <ctype.h>\n#include <string.h>\n\n#define NKEYS (sizeof keytab / sizeof keytab[0])\n#define MAXWORD 100\n\nint getword(char *, int);\nint binsearch(char *, struct key *, int);\n\nstruct key {\n\tchar *word;\n\tint count;\n} keytab[ ] = {\n\t\"auto\", 0,\n\t\"break\", 0,\n\t\"case\", 0,\n\t\"char\", 0,\n\t\"const\", 0,\n\t\"continue\", 0,\n\t\"default\", 0,\n\t\"do\", 0,\n\t\"double\", 0,\n\t\"else\", 0,\n\t\"enum\", 0,\n\t\"extern\", 0,\n\t\"float\", 0,\n\t\"for\", 0,\n\t\"goto\", 0,\n\t\"if\", 0,\n\t\"int\", 0,\n\t\"long\", 0,\n\t\"register\", 0,\n\t\"return\", 0,\n\t\"short\", 0,\n\t\"signed\", 0,\n\t\"sizeof\", 0,\n\t\"static\", 0,\n\t\"struct\", 0,\n\t\"switch\", 0,\n\t\"typedef\", 0,\n\t\"union\", 0,\n\t\"unsigned\", 0,\n\t\"void\", 0,\n\t\"volatile\", 0,\n\t\"while\", 0\n};\n\n\n/* count C keywords */\nmain()\n{\n\tint n;\n\tchar word[MAXWORD];\n\t\n\twhile (getword(word, MAXWORD) != EOF)\n\t\tif (isalpha(word[0]))\n\t\t\tif ((n = binsearch(word, keytab, NKEYS)) >= 0)\n\t\t\t\tkeytab[n].count++;\n\tfor (n = 0; n < NKEYS; n++)\n\t\tif (keytab[n].count > 0)\n\t\t\tprintf(\"%4d %s\\n\", keytab[n].count, keytab[n].word);\n\treturn 0;\n}\n\n/* binsearch: find word in tab[0]  ... tab[n - 1] */\nint binsearch(char *word, struct key tab[], int n)\n{\n\tint cond;\n\tint low, high, mid;\n\t\n\tlow = 0;\n\thigh = n -1;\n\twhile (low <= high){\n\t\tmid = (low+high)/2;\n\t\tif ((cond = strcmp(word, tab[mid].word)) < 0)\n\t\t\thigh = mid -1;\n\t\telse if (cond > 0)\n\t\t\tlow = mid +1;\n\t\telse\n\t\t\treturn mid;\n\t}\n\treturn -1;\n}\n\n/* getword: getnext word or character from input */\nint getword(char *word, int lim)\n{\n\tint c, getch(void);\n\tvoid ungetch(int);\n\tchar *w = word;\n\t\n\twhile (isspace(c = getch()))\n\t\t;\n\tif (c != EOF)\n\t\t*w++ = c;\n\tif (!isalpha(c)){\n\t\t*w = '\\0';\n\t\treturn c;\n\t}\n\tfor ( ; --lim > 0; w++)\n\t\tif (!isalnum(*w = getch())){\n\t\t\tungetch(*w);\n\t\t\tbreak;\n\t\t}\n\t*w = '\\0';\n\treturn word[0];\n}\n\n# define BUFSIZE 100\n\nchar buf[BUFSIZE]; /* buffer for ungetch */\nint bufp = 0;\t   /* next free position in buf */\n\nint getch(void) /* get a (possibly pushed back) character */\n{\n\treturn (bufp > 0) ? buf[--bufp] : getchar();\n}\n\nvoid ungetch(int c) /* push character back on input */\n{\n\tif (bufp >= BUFSIZE)\n\t\tprintf(\"ungetch: too many characters\\n\");\n\telse\n\t\tbuf[bufp++] = c;\n}\n", "filepath": "Chapter_06\\6_3\\6_3_count_c_keywords.c", "filename": "6_3_count_c_keywords.c"}, {"coder": "ahmed abdel haleem.", "date": "19 - 06 - 2008.", "section": "6.1", "title": "Basics of Structures", "page": "137", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n6.4: Pointers to Structures.\nPage: 137.\nDate: 19 - 06 - 2008.\n*/\n#include <stdio.h>\n#include <ctype.h>\n#include <string.h>\n\n#define NKEYS (sizeof keytab / sizeof keytab[0])\n#define MAXWORD 100\n\nint getword(char *, int);\nstruct key *binsearch(char *word, struct key *tab, int n); /* This is leigal and better declaration */\n\nstruct key {\n\tchar *word;\n\tint count;\n} keytab[ ] = {\n\t\"auto\", 0,\n\t\"break\", 0,\n\t\"case\", 0,\n\t\"char\", 0,\n\t\"const\", 0,\n\t\"continue\", 0,\n\t\"default\", 0,\n\t\"do\", 0,\n\t\"double\", 0,\n\t\"else\", 0,\n\t\"enum\", 0,\n\t\"extern\", 0,\n\t\"float\", 0,\n\t\"for\", 0,\n\t\"goto\", 0,\n\t\"if\", 0,\n\t\"int\", 0,\n\t\"long\", 0,\n\t\"register\", 0,\n\t\"return\", 0,\n\t\"short\", 0,\n\t\"signed\", 0,\n\t\"sizeof\", 0,\n\t\"static\", 0,\n\t\"struct\", 0,\n\t\"switch\", 0,\n\t\"typedef\", 0,\n\t\"union\", 0,\n\t\"unsigned\", 0,\n\t\"void\", 0,\n\t\"volatile\", 0,\n\t\"while\", 0\n};\n\n/* count C keyword; pointer version */\nmain()\n{\n\tchar word[MAXWORD];\n\tstruct key *p;\n\t\n\twhile (getword(word, MAXWORD) != EOF)\n\t\tif (isalpha(word[0]))\n\t\t\tif ((p = binsearch(word, keytab, NKEYS)) != NULL)\n\t\t\t\tp->count++;\n\tfor (p = keytab; p < keytab + NKEYS; p++)\n\t\tif (p->count > 0)\n\t\t\tprintf(\"%4d %s\\n\", p->count, p->word);\n\treturn 0;\n}\n\n/* binsearch: find word in tab[0]  ... tab[n-1] */\nstruct key *binsearch(char *word, struct key *tab, int n)\n{\n\tint cond;\n\tstruct key *low = &tab[0];\n\tstruct key *high = &tab[n];\n\tstruct key *mid;\n\t\n\twhile (low < high){\n\t\tmid = low + (high-low) / 2; /* To get mid element, we use subtraction, addition is illegal on pointers */\n\t\tif ((cond = strcmp(word, mid->word)) < 0)\n\t\t\thigh = mid + 1;\n\t\telse if (cond > 0)\n\t\t\tlow = mid + 1;\n\t\telse\n\t\t\treturn mid;\n\t}\n\treturn NULL;\n}\n\n/* getword: getnext word or character from input */\nint getword(char *word, int lim)\n{\n\tint c, getch(void);\n\tvoid ungetch(int);\n\tchar *w = word;\n\t\n\twhile (isspace(c = getch()))\n\t\t;\n\tif (c != EOF)\n\t\t*w++ = c;\n\tif (!isalpha(c)){\n\t\t*w = '\\0';\n\t\treturn c;\n\t}\n\tfor ( ; --lim > 0; w++)\n\t\tif (!isalnum(*w = getch())){\n\t\t\tungetch(*w);\n\t\t\tbreak;\n\t\t}\n\t*w = '\\0';\n\treturn word[0];\n}\n\n# define BUFSIZE 100\n\nchar buf[BUFSIZE]; /* buffer for ungetch */\nint bufp = 0;\t   /* next free position in buf */\n\nint getch(void) /* get a (possibly pushed back) character */\n{\n\treturn (bufp > 0) ? buf[--bufp] : getchar();\n}\n\nvoid ungetch(int c) /* push character back on input */\n{\n\tif (bufp >= BUFSIZE)\n\t\tprintf(\"ungetch: too many characters\\n\");\n\telse\n\t\tbuf[bufp++] = c;\n}\n", "filepath": "Chapter_06\\6_4\\6_4_pointers_to_structures.c", "filename": "6_4_pointers_to_structures.c"}, {"coder": "ahmed abdel haleem.", "date": "19 - 06 - 2008.", "section": "6.2", "title": "Structures and Functions", "page": "140", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmail.com\nK&R.\n6.5: Self-referential Structures.\nPage: 140 - 143.\nDate: 19 - 06 - 2008.\n*/\n\n#include <stdio.h>\n#include <ctype.h>\n#include <string.h>\n#include <stdlib.h>\n\n#define MAXWORD 100\n#define BUFSIZE 100\n\nstruct tnode *addtree(struct tnode *, char *);\nvoid treeprint(struct tnode *);\nint getword(char *, int);\nstruct tnode *talloc(void);\nchar *strdup(char *);\nchar buf[BUFSIZE]; /* buffer for ungetch */\nint bufp = 0;\t   /* next free position in buf */\n\n\nstruct tnode{\t/* The tree node: */\n\tchar *word;\t\t\t\t/* points to the text */\n\tint count;\t\t\t\t/* number of occurrences */\n\tstruct tnode *left;\t\t/* left child */\n\tstruct tnode *right;\t/*right child */\n};\n\n/* word frequency count */\nmain()\n{\n\tstruct tnode *root;\n\tchar word[MAXWORD];\n\t\n\troot = NULL;\n\twhile (getword(word, MAXWORD) != EOF)\n\t\tif (isalpha(word[0]))\n\t\t\troot = addtree(root, word);\n\ttreeprint(root);\n\treturn 0;\n}\n\n\n/* addtree: add a node with w, at or below p */\nstruct tnode *addtree(struct tnode *p, char *w)\n{\n\tint cond;\n\t\n\tif (p == NULL){\t\t\t/* a new word has arived */\n\t\tp = talloc();\t\t/* make a new node */\n\t\tp->word = strdup(w);\n\t\tp->count = 1;\n\t\tp->left = p->right = NULL;\n\t}else if ((cond = strcmp(w, p->word)) == 0)\n\t\tp->count++;\t\t/* repeated word */\n\telse if (cond < 0)  /* less than into left subtree */\n\t\tp->left = addtree(p->left, w);\n\telse\t\t\t\t/* greater than into right subtree */\n\t\tp->right = addtree(p->right, w);\n\treturn p;\n}\n\n/* treeprint: in-order of tree p */\nvoid treeprint(struct tnode *p)\n{\n\tif (p != NULL){\n\t\ttreeprint(p->left);\n\t\tprintf(\"%4d %s\\n\", p->count, p->word);\n\t\ttreeprint(p->right);\n\t}\n}\n\n/* talloc: make a tnode */\nstruct tnode *talloc(void)\n{\n\treturn (struct tnode *) malloc(sizeof(struct tnode));\n}\n\nchar *strdup(char *s)  /* make a duplicate of s */\n{\n\tchar *p;\n\t\n\tp = (char *) malloc(strlen(s)+1); \t/* +1 for '\\0' */\n\tif (p != NULL)\n\t\tstrcpy(p, s);\n\treturn p;\n}\n\n/* getword: getnext word or character from input */\nint getword(char *word, int lim)\n{\n\tint c, getch(void);\n\tvoid ungetch(int);\n\tchar *w = word;\n\t\n\twhile (isspace(c = getch()))\n\t\t;\n\tif (c != EOF)\n\t\t*w++ = c;\n\tif (!isalpha(c)){\n\t\t*w = '\\0';\n\t\treturn c;\n\t}\n\tfor ( ; --lim > 0; w++)\n\t\tif (!isalnum(*w = getch())){\n\t\t\tungetch(*w);\n\t\t\tbreak;\n\t\t}\n\t*w = '\\0';\n\treturn word[0];\n}\n\nint getch(void) /* get a (possibly pushed back) character */\n{\n\treturn (bufp > 0) ? buf[--bufp] : getchar();\n}\n\nvoid ungetch(int c) /* push character back on input */\n{\n\tif (bufp >= BUFSIZE)\n\t\tprintf(\"ungetch: too many characters\\n\");\n\telse\n\t\tbuf[bufp++] = c;\n}\n", "filepath": "Chapter_06\\6_5\\6_5_binary_trees.c", "filename": "6_5_binary_trees.c"}], "8": [{"coder": "ahmed abdel haleem.", "date": "25 - 06 - 2008", "section": "Unknown", "title": "Unknown", "page": "Unknown", "code": "/*\nCoder: ahmed abdel haleem.\nE-mail: ahmedhal@gmil.com\nK&R.\n8.6: Example - Listing Directories.\nDate: 25 - 06 - 2008\n*/\n#include <stdio.h>\n#include <string.h>\n#include <sys/syscall.h>\n#include <fcntl.h>\t\t\t/* flags for read and write */\n#include <sys/types.h>\t\t/* typdefs */\n#include <sys/stat.h>\t\t/* structure returned by stat */\n#include \"mydirent.h\"\t\t/* since GNU C ext have the same header */\n\nvoid fsize(char *);\n\n/* Print file sizes */\nmain(int argc, char **argv)\n{\n\tif (argc == 1)\t\t/* default: current directory */\n\t\tfsize(\".\");\n\telse\n\t\twhile(--argc >0)\n\t\t\tfsize(*++argv);\n\treturn 0;\n}\n\n/* int stat(char *, struct stat *); */\nvoid mydirwalk(char *, void(*fcn)(char *));\n\n/* fsize: print size of file \"name\" */\nvoid fsize(char *name)\n{\n\tstruct stat stbuf;\n\t\n\tif (stat(name, &stbuf) == -1){\n\t\tfprintf(stderr, \"fsize: can't access %s\", name);\n\t\treturn;\n\t}\n\tif((stbuf.st_mode & S_IFMT) == S_IFDIR)\n\t\tmydirwalk(name, fsize);\n\tprintf(\"%8ld %s\\n\", stbuf.st_size, name);\n}\n\n#define MAX_PATH 1024\n\n/* dirwalk: apply fcn to all files in dir */\nvoid mydirwalk(char *dir, void(*fcn)(char *))\n{\n\tchar name[MAX_PATH];\n\tmyDirent *dp;\n\tmyDIR *dfd;\n\t\n\tif((dfd = myopendir(dir)) == NULL){\n\t\tfprintf(stderr, \"dirwalk: can't open %s\\n\", dir);\n\t\treturn;\n\t}\n\twhile ((dp = myreaddir(dfd)) != NULL){\n\t\tif (strcmp(dp->name, \".\") == 0 || strcmp(dp->nme, ..) == 0)\n\t\t\tcontinue;\t/* Skip self and parent */\n\t\tif (strlen(dir) + strlen(dp->name) + 2 > sizeof(name))\n\t\t\tfprintf(stderr, \"mydirwalk: name %s %s too long\\n\", dir, dp->name);\n\t\telse {\n\t\t\tsprintf(name, \"%s/%s\", dir, dp->name);\n\t\t\t(*fcn)(name);\n\t\t}\n\t}\n\tclosedir(dfd);\n}\n\n\n", "filepath": "Chapter_08\\8_6\\8_6.c", "filename": "8_6.c"}]};
+
+        function renderChapters() {
+            const container = document.getElementById('chaptersContainer');
+            container.innerHTML = '';
+
+            // Add Chapter 0 - Getting Started
+            const chapter0 = document.createElement('div');
+            chapter0.className = 'chapter-card chapter-0';
+            chapter0.innerHTML = `
+                <div class="chapter-header collapsible-header chapter-0-header">
+                    <span class="toggle-icon">▶</span>
+                    <div class="header-content">
+                        <h2>Chapter 0</h2>
+                        <p>Getting Started with C</p>
+                    </div>
+                </div>
+                <div class="chapter-body collapsed" id="chapter-0-body">
+                    <div class="chapter-0-content">
+                        <div class="resource-section">
+                            <h3>Download Complete Collection</h3>
+                            <a href="[GIT_REPO_URL_PLACEHOLDER]" class="resource-link" target="_blank">
+                                Clone from Git Repository
+                            </a>
+                            <p class="resource-description">Get all 90 C solutions with complete source code</p>
+                        </div>
+                        <div class="resource-section">
+                            <h3>C Compilers & Tools</h3>
+                            <a href="COMPILERS.html" class="resource-link">
+                                Compiler Guide
+                            </a>
+                            <p class="resource-description">Learn about GCC, Clang, MSVC, and other C compilers</p>
+                        </div>
+                        <div class="resource-section">
+                            <h3>Editors & IDEs</h3>
+                            <a href="EDITORS.html" class="resource-link">
+                                Editor & IDE Guide
+                            </a>
+                            <p class="resource-description">Popular choices for C development with setup instructions</p>
+                        </div>
+                        <div class="resource-section">
+                            <h3>Debuggers & Debugging Tools</h3>
+                            <a href="DEBUGGERS.html" class="resource-link">
+                                Debugging Guide
+                            </a>
+                            <p class="resource-description">Learn debugging techniques with GDB, LLDB, and Valgrind</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(chapter0);
+
+            // Add Chapter 0 toggle functionality
+            const chapter0Header = chapter0.querySelector('.chapter-header');
+            chapter0Header.onclick = () => {
+                const body = document.getElementById('chapter-0-body');
+                const icon = chapter0Header.querySelector('.toggle-icon');
+                body.classList.toggle('collapsed');
+                icon.style.transform = body.classList.contains('collapsed') ? 'rotate(0deg)' : 'rotate(90deg)';
+            };
+            chapter0Header.style.cursor = 'pointer';
+
+            for (const [chapter, programs] of Object.entries(programsData)) {
+                const chapterNum = parseInt(chapter);
+                const chapterNames = {
+                    1: "A Tutorial Introduction",
+                    2: "Types, Operators, and Expressions",
+                    3: "Control Flow",
+                    4: "Functions and Program Structure",
+                    5: "Pointers and Arrays",
+                    6: "Structures",
+                    8: "The UNIX System Interface"
+                };
+
+                const card = document.createElement('div');
+                card.className = 'chapter-card';
+                const bodyId = `chapter-${chapterNum}-body`;
+
+                const header = document.createElement('div');
+                header.className = 'chapter-header collapsible-header';
+                header.style.cursor = 'pointer';
+                header.innerHTML = `
+                    <span class="toggle-icon">▶</span>
+                    <div class="header-content">
+                        <h2>Chapter ${chapterNum}</h2>
+                        <p>${chapterNames[chapterNum] || 'Unknown'}</p>
+                        <div class="program-count">${programs.length} Solutions</div>
+                    </div>
+                `;
+
+                header.onclick = () => {
+                    const body = document.getElementById(bodyId);
+                    const icon = header.querySelector('.toggle-icon');
+                    body.classList.toggle('collapsed');
+                    icon.style.transform = body.classList.contains('collapsed') ? 'rotate(0deg)' : 'rotate(90deg)';
+                };
+
+                const body = document.createElement('div');
+                body.className = 'chapter-body collapsed';
+                body.id = bodyId;
+
+                const list = document.createElement('ul');
+                list.className = 'program-list';
+
+                programs.forEach((prog, idx) => {
+                    const item = document.createElement('li');
+                    item.className = 'program-item';
+                    item.onclick = () => showDetail(chapterNum, idx);
+                    item.innerHTML = `
+                        <div class="program-title">${prog.section} - ${prog.title}</div>
+                        <div class="program-meta">
+                            <span class="badge badge-chapter">Ch ${chapterNum}</span>
+                            <span class="badge badge-page">Page ${prog.page}</span>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+
+                body.appendChild(list);
+                card.appendChild(header);
+                card.appendChild(body);
+                container.appendChild(card);
+            }
+        }
+
+        function highlightCode(code) {
+            // Patterns for C syntax
+            const patterns = [
+                // Comments (must be first to avoid highlighting inside them)
+                { regex: /\/\/.*$/gm, className: 'comment' },
+                { regex: /\/\*[\s\S]*?\*\//g, className: 'comment' },
+                // Strings (must be before keywords)
+                { regex: /"(?:\\.|[^"\\])*"/g, className: 'string' },
+                { regex: /'(?:\\.|[^'\\])*'/g, className: 'string' },
+                // Keywords
+                { regex: /\b(int|float|double|char|void|if|else|while|for|do|switch|case|default|break|continue|return|struct|union|typedef|static|extern|register|const|sizeof|include|define|printf|scanf)\b/g, className: 'keyword' },
+                // Numbers
+                { regex: /\b\d+\.?\d*\b/g, className: 'number' },
+                // Function calls (name followed by parenthesis)
+                { regex: /([a-zA-Z_]\w*)\s*(?=\()/g, className: 'function' }
+            ];
+
+            let result = escapeHtml(code);
+            let html = '';
+            let lastIndex = 0;
+            const matches = [];
+
+            // Collect all matches with their positions
+            patterns.forEach(pattern => {
+                let match;
+                while ((match = pattern.regex.exec(code)) !== null) {
+                    matches.push({
+                        start: match.index,
+                        end: match.index + match[0].length,
+                        text: match[0],
+                        className: pattern.className
+                    });
+                }
+            });
+
+            // Sort by start position
+            matches.sort((a, b) => a.start - b.start);
+
+            // Remove overlapping matches (keep first match)
+            const filtered = [];
+            let lastEnd = 0;
+            matches.forEach(match => {
+                if (match.start >= lastEnd) {
+                    filtered.push(match);
+                    lastEnd = match.end;
+                }
+            });
+
+            // Build HTML with highlighting
+            lastIndex = 0;
+            filtered.forEach(match => {
+                html += escapeHtml(code.substring(lastIndex, match.start));
+                html += '<span class="' + match.className + '">' + escapeHtml(match.text) + '</span>';
+                lastIndex = match.end;
+            });
+            html += escapeHtml(code.substring(lastIndex));
+
+            return html;
+        }
+
+        function downloadSource(chapter, index) {
+            const program = programsData[chapter][index];
+            const filename = program.filename || `Chapter_${chapter}_${index}.c`;
+
+            const blob = new Blob([program.code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function showDetail(chapter, index) {
+            const program = programsData[chapter][index];
+            const detailContent = document.getElementById('detailContent');
+            const highlightedCode = highlightCode(program.code);
+
+            detailContent.innerHTML = `
+                <div class="detail-header">
+                    <h2>${program.section} - ${program.title}</h2>
+                    <button class="download-btn" onclick="downloadSource(${chapter}, ${index})">Download Source</button>
+                </div>
+
+                <div class="metadata-grid">
+                    <div class="metadata-item">
+                        <div class="metadata-label">Coder</div>
+                        <div class="metadata-value">${program.coder}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Date</div>
+                        <div class="metadata-value">${program.date}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Chapter</div>
+                        <div class="metadata-value">Chapter ${chapter}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Page Number</div>
+                        <div class="metadata-value">${program.page}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Section</div>
+                        <div class="metadata-value">${program.section}</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">File</div>
+                        <div class="metadata-value">${program.filename}</div>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <h3>Source Code</h3>
+                    <pre><code>${highlightedCode}</code></pre>
+                </div>
+            `;
+
+            document.getElementById('detailView').classList.add('active');
+            document.getElementById('chaptersContainer').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        function closeDetail() {
+            document.getElementById('detailView').classList.remove('active');
+            document.getElementById('chaptersContainer').style.display = 'grid';
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('chapterFilter').value = '';
+            renderChapters();
+        }
+
+        // Initialize
+        renderChapters();
+    </script>
+</body>
+</html>

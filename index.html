@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Hub - Ahmed Abdelhaleem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+
+        .breadcrumb {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            margin-top: 15px;
+        }
+
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            transition: border-color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            border-bottom-color: white;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .doc-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .doc-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .doc-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .doc-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .doc-topics {
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .doc-topics li {
+            color: #555;
+            margin-bottom: 5px;
+            margin-left: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #fff3e0;
+            color: #f57c00;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            transition: border-color 0.3s ease;
+        }
+
+        footer a:hover {
+            border-bottom-color: white;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .docs-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .doc-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Documentation Hub</h1>
+            <p>Comprehensive guides for programming, operating systems, and development</p>
+            <div class="breadcrumb">
+                <a href="https://abdelhaleemahmed.github.io/">← Back to Portfolio</a>
+            </div>
+        </header>
+
+        <div class="docs-grid">
+            <!-- Programming -->
+            <div class="doc-card">
+                <div class="doc-icon">💻</div>
+                <h2>Programming Languages</h2>
+                <span class="status-badge">In Development</span>
+                <p class="doc-description">
+                    In-depth guides for C, Pascal, and advanced Python programming techniques.
+                </p>
+                <ul class="doc-topics">
+                    <li>🔹 C Programming Fundamentals</li>
+                    <li>🔹 Pascal Language Guide</li>
+                    <li>🔹 Python Advanced Topics</li>
+                    <li>🔹 Code Examples & Patterns</li>
+                </ul>
+            </div>
+
+            <!-- Operating Systems -->
+            <div class="doc-card">
+                <div class="doc-icon">⚙️</div>
+                <h2>Operating Systems</h2>
+                <span class="status-badge">In Development</span>
+                <p class="doc-description">
+                    Comprehensive documentation for Windows, Linux, and Unix systems.
+                </p>
+                <ul class="doc-topics">
+                    <li>🐧 Linux Administration</li>
+                    <li>🪟 Windows Server Guide</li>
+                    <li>🔧 Unix System Guide</li>
+                    <li>⚙️ System Configuration</li>
+                </ul>
+            </div>
+
+            <!-- Development Tools -->
+            <div class="doc-card">
+                <div class="doc-icon">🛠️</div>
+                <h2>Development Tools</h2>
+                <span class="status-badge">In Development</span>
+                <p class="doc-description">
+                    Master version control, CI/CD, containerization, and cloud platforms.
+                </p>
+                <ul class="doc-topics">
+                    <li>📦 Version Control (Git)</li>
+                    <li>🔄 CI/CD Pipelines</li>
+                    <li>🐳 Containerization</li>
+                    <li>☁️ Cloud Platforms</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                <strong>Documentation Hub</strong> - Part of
+                <a href="https://abdelhaleemahmed.github.io/">Ahmed Abdelhaleem's Portfolio</a>
+            </p>
+            <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9;">
+                Last updated: December 3, 2025 |
+                <a href="https://github.com/abdelhaleemahmed">GitHub</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

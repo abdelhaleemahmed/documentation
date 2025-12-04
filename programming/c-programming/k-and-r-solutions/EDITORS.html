@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Editors & IDEs Guide - K&R Solutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .editor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .editor-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .editor-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .editor-card h2 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .editor-type {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .editor-card p {
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .feature-list {
+            margin: 15px 0;
+        }
+
+        .feature-list h3 {
+            color: #2d3748;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-list li {
+            padding: 5px 0;
+            padding-left: 20px;
+            color: #4a5568;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .install-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .install-link:hover {
+            background: #764ba2;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin: 30px 0;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .category {
+            background: #bee3f8;
+            color: #2c5282;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .note {
+            background: #bee3f8;
+            border-left: 4px solid #2c5282;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .note strong {
+            color: #2c5282;
+        }
+
+        .recommendation {
+            background: #c6f6d5;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .recommendation strong {
+            color: #22543d;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="documentation.html" class="back-link">← Back to Documentation</a>
+
+        <h1>C Editors & IDEs Guide</h1>
+        <p class="subtitle">Choose the right development environment for your C programming</p>
+
+        <p>An editor or IDE makes writing C code easier with features like syntax highlighting, auto-completion, debugging, and project management.</p>
+
+        <h2>Quick Comparison</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Editor/IDE</th>
+                    <th>Type</th>
+                    <th>Platform</th>
+                    <th>Cost</th>
+                    <th>Learning Curve</th>
+                    <th>Best For</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>VS Code</strong></td>
+                    <td><span class="category">Editor</span></td>
+                    <td>All</td>
+                    <td>Free</td>
+                    <td>Easy</td>
+                    <td>Modern, lightweight learning</td>
+                </tr>
+                <tr>
+                    <td><strong>Dev-C++</strong></td>
+                    <td><span class="category">IDE</span></td>
+                    <td>Windows</td>
+                    <td>Free</td>
+                    <td>Very Easy</td>
+                    <td>Beginners, Windows users</td>
+                </tr>
+                <tr>
+                    <td><strong>Code::Blocks</strong></td>
+                    <td><span class="category">IDE</span></td>
+                    <td>All</td>
+                    <td>Free</td>
+                    <td>Easy</td>
+                    <td>Cross-platform, students</td>
+                </tr>
+                <tr>
+                    <td><strong>Visual Studio</strong></td>
+                    <td><span class="category">IDE</span></td>
+                    <td>Windows</td>
+                    <td>Free (Community)</td>
+                    <td>Hard</td>
+                    <td>Professional Windows dev</td>
+                </tr>
+                <tr>
+                    <td><strong>Vim/Neovim</strong></td>
+                    <td><span class="category">Editor</span></td>
+                    <td>All</td>
+                    <td>Free</td>
+                    <td>Hard</td>
+                    <td>Advanced users, Linux</td>
+                </tr>
+                <tr>
+                    <td><strong>Nano</strong></td>
+                    <td><span class="category">Editor</span></td>
+                    <td>Linux/Mac</td>
+                    <td>Free</td>
+                    <td>Very Easy</td>
+                    <td>Quick edits, beginners</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="editor-grid">
+            <div class="editor-card">
+                <h2>Visual Studio Code (VS Code)</h2>
+                <p class="editor-type">Lightweight Editor | All Platforms</p>
+                <p>Modern, lightweight code editor with excellent extensions and Git integration. Perfect balance of features and simplicity.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Syntax highlighting for C</li>
+                        <li>IntelliSense (auto-completion)</li>
+                        <li>Integrated terminal</li>
+                        <li>Git integration built-in</li>
+                        <li>Debugging support</li>
+                        <li>Thousands of extensions</li>
+                        <li>Theme customization</li>
+                    </ul>
+                </div>
+
+                <p><strong>For C Development Install:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>C/C++ extension (Microsoft)</li>
+                    <li>Code Runner (optional)</li>
+                </ul>
+
+                <a href="https://code.visualstudio.com" class="install-link" target="_blank">Download VS Code</a>
+            </div>
+
+            <div class="editor-card">
+                <h2>Dev-C++</h2>
+                <p class="editor-type">Full IDE | Windows Only</p>
+                <p>Simple, beginner-friendly IDE with integrated compiler and debugger. Great for learning C on Windows.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Simple interface</li>
+                        <li>Integrated MinGW compiler</li>
+                        <li>Built-in debugger</li>
+                        <li>Project management</li>
+                        <li>No configuration needed</li>
+                        <li>Great for students</li>
+                        <li>Very lightweight</li>
+                    </ul>
+                </div>
+
+                <p><strong>Best for:</strong> Windows users, absolute beginners</p>
+
+                <a href="https://www.bloodshed.net/devcpp.html" class="install-link" target="_blank">Download Dev-C++</a>
+            </div>
+
+            <div class="editor-card">
+                <h2>Code::Blocks</h2>
+                <p class="editor-type">Full IDE | Cross-Platform</p>
+                <p>Free, open-source IDE with excellent C/C++ support. Works on Windows, Mac, and Linux.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Multi-platform support</li>
+                        <li>Multiple compiler support</li>
+                        <li>Project management</li>
+                        <li>Debugging tools</li>
+                        <li>Class browser</li>
+                        <li>Code completion</li>
+                        <li>Customizable interface</li>
+                    </ul>
+                </div>
+
+                <p><strong>Best for:</strong> Cross-platform development, students</p>
+
+                <a href="https://www.codeblocks.org" class="install-link" target="_blank">Download Code::Blocks</a>
+            </div>
+
+            <div class="editor-card">
+                <h2>Visual Studio Community</h2>
+                <p class="editor-type">Professional IDE | Windows</p>
+                <p>Microsoft's powerful IDE with advanced debugging and professional tools. Free Community edition.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Very powerful debugger</li>
+                        <li>Advanced refactoring</li>
+                        <li>Integrated Azure support</li>
+                        <li>Performance profiling</li>
+                        <li>Test runner</li>
+                        <li>Database tools</li>
+                        <li>Large community</li>
+                    </ul>
+                </div>
+
+                <p><strong>Note:</strong> Heavy IDE, best for serious development</p>
+
+                <a href="https://visualstudio.microsoft.com" class="install-link" target="_blank">Download Visual Studio</a>
+            </div>
+
+            <div class="editor-card">
+                <h2>Vim / Neovim</h2>
+                <p class="editor-type">Advanced Editor | All Platforms</p>
+                <p>Powerful text editor with steep learning curve but unmatched efficiency once mastered. Popular with experienced developers.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Modal editing</li>
+                        <li>Keyboard-centric</li>
+                        <li>Highly customizable</li>
+                        <li>Plugin ecosystem</li>
+                        <li>Available everywhere</li>
+                        <li>Very lightweight</li>
+                        <li>LSP support (Neovim)</li>
+                    </ul>
+                </div>
+
+                <p><strong>Best for:</strong> Advanced users, Linux developers</p>
+
+                <a href="https://www.vim.org" class="install-link" target="_blank">Learn Vim</a>
+            </div>
+
+            <div class="editor-card">
+                <h2>Nano</h2>
+                <p class="editor-type">Simple Editor | Linux/Mac</p>
+                <p>Built-in editor on most Unix systems. Perfect for quick edits and learning basic Linux.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Always available</li>
+                        <li>Very simple to use</li>
+                        <li>No learning curve</li>
+                        <li>Basic syntax highlighting</li>
+                        <li>Search and replace</li>
+                        <li>Easy to learn</li>
+                        <li>Perfect for terminals</li>
+                    </ul>
+                </div>
+
+                <p><strong>Best for:</strong> Quick edits, server work</p>
+
+                <div class="code-block" style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 4px; margin-top: 10px;">
+# Usually pre-installed, open with:
+nano filename.c
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation">
+            <strong>Recommendation for K&R Learning:</strong><br>
+            <br>
+            <strong>Beginners:</strong> Use <strong>Dev-C++</strong> (Windows) or <strong>Code::Blocks</strong> (all platforms). Everything is pre-configured, just write and run.<br>
+            <br>
+            <strong>Modern Learning:</strong> Use <strong>VS Code</strong> with C/C++ extension. More professional setup, still easy to learn.<br>
+            <br>
+            <strong>Cross-Platform:</strong> Use <strong>Code::Blocks</strong> or <strong>VS Code</strong>. Both work on Windows, Mac, and Linux.<br>
+            <br>
+            <strong>Experienced:</strong> Use <strong>Vim</strong> or <strong>Neovim</strong> if comfortable with the learning curve.
+        </div>
+
+        <h2>Setting Up for C Development</h2>
+
+        <h3 style="color: #2d3748; margin: 20px 0 10px;">1. Install Compiler</h3>
+        <p>Follow the compiler guide to install GCC, Clang, or MSVC.</p>
+
+        <h3 style="color: #2d3748; margin: 20px 0 10px;">2. Install Editor/IDE</h3>
+        <p>Choose from the options above and follow the download link.</p>
+
+        <h3 style="color: #2d3748; margin: 20px 0 10px;">3. Configure Path (if needed)</h3>
+        <p>Make sure your editor can find the compiler. Most IDEs auto-detect.</p>
+
+        <h3 style="color: #2d3748; margin: 20px 0 10px;">4. Create First Program</h3>
+        <div class="code-block">
+#include &lt;stdio.h&gt;
+
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}
+        </div>
+
+        <h3 style="color: #2d3748; margin: 20px 0 10px;">5. Compile and Run</h3>
+        <p>Use your IDE's compile/run button or terminal command.</p>
+
+        <div class="note">
+            <strong>IDE vs Editor:</strong><br>
+            <strong>IDE</strong> (Integrated Development Environment) includes editor + compiler + debugger all in one. Better for beginners.<br>
+            <strong>Editor</strong> is just for editing; you configure compiler separately. More flexible, used by professionals.
+        </div>
+
+        <p style="margin-top: 30px; text-align: center; color: #718096; font-style: italic;">
+            Start with whichever appeals to you. Once comfortable with C syntax, you can switch tools easily.
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Exercise_2._3.c: In function `main':
+Exercise_2._3.c:24: warning: passing arg 1 of `htoi' makes pointer from integer without a cast
+Exercise_2._3.c: In function `htoi':
+Exercise_2._3.c:33: error: parameter name omitted
+Exercise_2._3.c:38: error: `s' undeclared (first use in this function)
+Exercise_2._3.c:38: error: (Each undeclared identifier is reported only once
+Exercise_2._3.c:38: error: for each function it appears in.)
+Exercise_2._3.c:40: warning: implicit declaration of function `isdigit'
+Exercise_2._3.c:48:2: warning: no newline at end of file

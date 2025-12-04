@@ -1,0 +1,18 @@
+In this example we use:
+stat:
+	The stat system call takes a file name and returns all of the information in the inode for that file, or -1if there is an error.
+	
+	The stat structure describing the value returnted by stat is in <sys/stat.h>.
+	
+	dev_t and ino_t (defined in stat structure) are defined in <sys/types.h>, which must be included too.
+	
+<fcntl.h>: flags for read and write.
+	
+Read info and man pages for <sys/types> (Open the file alos).
+
+Opendir, Readdir, Clodsedir:
+	are system specific.
+	they use the informations in the header <sys/dir.h>.
+
+	Opendir use fstat which is like stat except that it applies to a file descriptor.
+	

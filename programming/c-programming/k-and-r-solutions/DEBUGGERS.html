@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Debuggers & Debugging Tools - K&R Solutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .debugger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .debugger-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .debugger-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .debugger-card h2 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .platform {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .debugger-card p {
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .feature-list {
+            margin: 15px 0;
+        }
+
+        .feature-list h3 {
+            color: #2d3748;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-list li {
+            padding: 5px 0;
+            padding-left: 20px;
+            color: #4a5568;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .install-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .install-link:hover {
+            background: #764ba2;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin: 30px 0;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .category {
+            background: #bee3f8;
+            color: #2c5282;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .note {
+            background: #bee3f8;
+            border-left: 4px solid #2c5282;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .note strong {
+            color: #2c5282;
+        }
+
+        .recommendation {
+            background: #c6f6d5;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .recommendation strong {
+            color: #22543d;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #2d3748;
+            margin: 20px 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="documentation.html" class="back-link">← Back to Documentation</a>
+
+        <h1>C Debuggers & Debugging Tools Guide</h1>
+        <p class="subtitle">Learn debugging techniques and tools for C development</p>
+
+        <p>Debugging is essential for finding and fixing errors in your C programs. Here are the most popular debugging tools:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Debugger</th>
+                    <th>Platform</th>
+                    <th>Type</th>
+                    <th>Cost</th>
+                    <th>Best For</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>GDB</strong></td>
+                    <td>Linux, Windows, Mac</td>
+                    <td><span class="category">CLI</span></td>
+                    <td>Free</td>
+                    <td>GNU/Linux systems, remote debugging</td>
+                </tr>
+                <tr>
+                    <td><strong>LLDB</strong></td>
+                    <td>Linux, Windows, Mac</td>
+                    <td><span class="category">CLI</span></td>
+                    <td>Free</td>
+                    <td>LLVM projects, modern systems</td>
+                </tr>
+                <tr>
+                    <td><strong>Valgrind</strong></td>
+                    <td>Linux, Mac</td>
+                    <td><span class="category">Memory Tool</span></td>
+                    <td>Free</td>
+                    <td>Memory leaks, profiling</td>
+                </tr>
+                <tr>
+                    <td><strong>Visual Studio Debugger</strong></td>
+                    <td>Windows</td>
+                    <td><span class="category">GUI</span></td>
+                    <td>Free (Community)</td>
+                    <td>Windows development, UI debugging</td>
+                </tr>
+                <tr>
+                    <td><strong>CodeLite Debugger</strong></td>
+                    <td>Linux, Windows, Mac</td>
+                    <td><span class="category">GUI</span></td>
+                    <td>Free</td>
+                    <td>Cross-platform, integrated</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="debugger-grid">
+            <div class="debugger-card">
+                <h2>GDB (GNU Debugger)</h2>
+                <p class="platform">Command-Line Debugger | All Platforms</p>
+                <p>The most powerful and widely-used open source debugger. Essential tool for serious C development.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Set breakpoints at lines or functions</li>
+                        <li>Step through code line by line</li>
+                        <li>Inspect variables and memory</li>
+                        <li>Evaluate expressions dynamically</li>
+                        <li>Backtrace for stack inspection</li>
+                        <li>Remote debugging support</li>
+                        <li>Python scripting</li>
+                    </ul>
+                </div>
+
+                <p><strong>Installation:</strong></p>
+                <div class="code-block">
+# Linux (Ubuntu/Debian)
+sudo apt-get install gdb
+
+# macOS (Homebrew)
+brew install gdb
+
+# Windows (MinGW)
+Part of MinGW installation
+                </div>
+
+                <p><strong>Basic Usage:</strong></p>
+                <div class="code-block">
+gcc -g program.c -o program
+gdb ./program
+                </div>
+
+                <a href="https://www.gnu.org/software/gdb/" class="install-link" target="_blank">Learn GDB</a>
+            </div>
+
+            <div class="debugger-card">
+                <h2>LLDB</h2>
+                <p class="platform">Modern Debugger | All Platforms</p>
+                <p>Modern debugger from the LLVM project. Better performance and improved user experience compared to GDB.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Similar to GDB commands</li>
+                        <li>Faster performance</li>
+                        <li>Better error messages</li>
+                        <li>Scripting with Python</li>
+                        <li>Remote debugging</li>
+                        <li>Breakpoints and watchpoints</li>
+                        <li>Memory inspection</li>
+                    </ul>
+                </div>
+
+                <p><strong>Installation:</strong></p>
+                <div class="code-block">
+# Linux (Ubuntu/Debian)
+sudo apt-get install lldb
+
+# macOS (comes with Xcode tools)
+xcode-select --install
+
+# Windows
+Download from llvm.org
+                </div>
+
+                <p><strong>Basic Usage:</strong></p>
+                <div class="code-block">
+clang -g program.c -o program
+lldb ./program
+                </div>
+
+                <a href="https://lldb.llvm.org/" class="install-link" target="_blank">Learn LLDB</a>
+            </div>
+
+            <div class="debugger-card">
+                <h2>Valgrind</h2>
+                <p class="platform">Memory Analysis | Linux, Mac</p>
+                <p>Specialized tool for detecting memory leaks, buffer overflows, and profiling your C programs.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Detects memory leaks</li>
+                        <li>Finds buffer overflows</li>
+                        <li>Tracks memory usage</li>
+                        <li>CPU profiling (Callgrind)</li>
+                        <li>Cache simulation</li>
+                        <li>Thread debugging (Helgrind)</li>
+                        <li>No recompilation needed</li>
+                    </ul>
+                </div>
+
+                <p><strong>Installation:</strong></p>
+                <div class="code-block">
+# Linux (Ubuntu/Debian)
+sudo apt-get install valgrind
+
+# macOS (Homebrew)
+brew install valgrind
+                </div>
+
+                <p><strong>Basic Usage:</strong></p>
+                <div class="code-block">
+gcc program.c -o program
+valgrind ./program
+valgrind --leak-check=full ./program
+                </div>
+
+                <a href="https://www.valgrind.org/" class="install-link" target="_blank">Learn Valgrind</a>
+            </div>
+
+            <div class="debugger-card">
+                <h2>Visual Studio Debugger</h2>
+                <p class="platform">IDE Debugger | Windows</p>
+                <p>Powerful graphical debugger integrated into Visual Studio. Perfect for Windows-based C development.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Visual breakpoint management</li>
+                        <li>Watch windows for variables</li>
+                        <li>Call stack visualization</li>
+                        <li>Memory inspection tools</li>
+                        <li>Immediate window for expressions</li>
+                        <li>Parallel debugging</li>
+                        <li>Remote debugging</li>
+                    </ul>
+                </div>
+
+                <p><strong>Installation:</strong></p>
+                <div class="code-block">
+Download Visual Studio Community:
+https://visualstudio.microsoft.com/
+Select "Desktop development with C++"
+                </div>
+
+                <p><strong>How to Debug:</strong></p>
+                <p>Set breakpoints by clicking line numbers, then press F5 to start debugging. Use F10 to step over and F11 to step into functions.</p>
+
+                <a href="https://visualstudio.microsoft.com/" class="install-link" target="_blank">Visual Studio</a>
+            </div>
+
+            <div class="debugger-card">
+                <h2>CodeLite Debugger</h2>
+                <p class="platform">IDE Integrated | Cross-Platform</p>
+                <p>Integrated debugger in the CodeLite IDE. Great for cross-platform C development with graphical interface.</p>
+
+                <div class="feature-list">
+                    <h3>Features:</h3>
+                    <ul>
+                        <li>Graphical interface</li>
+                        <li>Breakpoint management</li>
+                        <li>Variable inspection</li>
+                        <li>Stack trace view</li>
+                        <li>Watch expressions</li>
+                        <li>Cross-platform</li>
+                        <li>Open source</li>
+                    </ul>
+                </div>
+
+                <p><strong>Installation:</strong></p>
+                <div class="code-block">
+Download CodeLite:
+https://www.codelite.org/
+Available for Windows, Linux, Mac
+                </div>
+
+                <p><strong>How to Debug:</strong></p>
+                <p>In CodeLite, go to Debug menu and select "Debug Active Project" or press Ctrl+Shift+D to start debugging.</p>
+
+                <a href="https://www.codelite.org/" class="install-link" target="_blank">CodeLite IDE</a>
+            </div>
+        </div>
+
+        <div class="recommendation">
+            <strong>Recommendation for K&R Learning:</strong><br>
+            <br>
+            <strong>Linux Users:</strong> Use <strong>GDB</strong>. It's the standard debugger and excellent for learning. Start with basic commands: break, run, step, next, print.<br>
+            <br>
+            <strong>macOS Users:</strong> Use <strong>LLDB</strong> (comes with Xcode) or <strong>GDB</strong>. LLDB is more modern but GDB has more tutorials.<br>
+            <br>
+            <strong>Windows Users:</strong> Use <strong>Visual Studio Debugger</strong> for graphical interface, or <strong>GDB/MinGW</strong> for command-line experience.<br>
+            <br>
+            <strong>Memory Checking:</strong> Use <strong>Valgrind</strong> on Linux to catch memory leaks and buffer overflows in your programs.
+        </div>
+
+        <h2>Debugging Workflow</h2>
+
+        <h3>Step 1: Compile with Debug Symbols</h3>
+        <p>Always compile with the -g flag to include debugging information:</p>
+        <div class="code-block">
+gcc -g -Wall -Wextra program.c -o program
+        </div>
+
+        <h3>Step 2: Start the Debugger</h3>
+        <div class="code-block">
+gdb ./program
+        </div>
+
+        <h3>Step 3: Common GDB Commands</h3>
+        <div class="code-block">
+(gdb) break main              # Set breakpoint at main
+(gdb) break filename.c:10     # Set breakpoint at line 10
+(gdb) run                     # Start program
+(gdb) next                    # Step over next line
+(gdb) step                    # Step into function
+(gdb) continue                # Continue execution
+(gdb) print variable_name     # Print variable value
+(gdb) backtrace               # Show call stack
+(gdb) quit                    # Exit debugger
+        </div>
+
+        <h3>Step 4: Check for Memory Leaks</h3>
+        <div class="code-block">
+valgrind --leak-check=full --show-leak-kinds=all ./program
+        </div>
+
+        <div class="note">
+            <strong>Tip:</strong> When debugging, always compile with optimization disabled (-O0) to ensure variable values match your source code. Use: gcc -g -O0 program.c -o program
+        </div>
+
+        <h2>Debugging Tips</h2>
+
+        <ul style="margin: 20px 0; padding-left: 20px;">
+            <li><strong>Use breakpoints:</strong> Set breakpoints at functions where the error might occur</li>
+            <li><strong>Watch variables:</strong> Use watch points to monitor variable changes</li>
+            <li><strong>Print statements:</strong> Sometimes printf() is faster than using a debugger</li>
+            <li><strong>Check return values:</strong> Always check function return values for errors</li>
+            <li><strong>Use memory tools:</strong> Valgrind catches errors that are hard to find manually</li>
+            <li><strong>Trace execution:</strong> Use step-by-step execution to understand program flow</li>
+        </ul>
+
+        <p style="margin-top: 30px; text-align: center; color: #718096; font-style: italic;">
+            Learning to use a debugger effectively will save you hours of debugging time!
+        </p>
+    </div>
+</body>
+</html>
