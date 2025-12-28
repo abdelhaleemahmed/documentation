@@ -22,7 +22,6 @@ kramdown:
 plugins:
   - jekyll-relative-links
   - jekyll-optional-front-matter
-  - jekyll-readme-index
   - jekyll-titles-from-headings
 
 # Plugin Configuration
@@ -39,8 +38,16 @@ titles_from_headings:
   collections: false
 
 # File Handling
+# Prioritize index.html over README.md when both exist
 include:
   - README.md
+
+# Ensure index.html is always preferred as the directory index
+defaults:
+  - scope:
+      path: ""
+    values:
+      permalink: /:path/:basename:output_ext
 
 exclude:
   - node_modules/
