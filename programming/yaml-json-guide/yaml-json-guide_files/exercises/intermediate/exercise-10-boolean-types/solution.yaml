@@ -1,0 +1,13 @@
+# Exercise 10: Boolean Types - Solution
+
+settings:
+  debug: true           # boolean true
+  ssl: false            # boolean false
+  country_code: "NO"    # string "NO", not boolean
+  answer: "no"          # string "no", not boolean
+  status: "on"          # string "on", not boolean
+  flags:
+    - yes               # boolean true
+    - "yes"             # string "yes"
+    - no                # boolean false
+    - "no"              # string "no"

@@ -1,0 +1,10 @@
+# Exercise 3: Fix the errors in this YAML file!
+# There are 4 errors to find and fix
+
+server
+  host: localhost
+  port: 8080
+	country: NO
+  features:
+  - authentication
+    - caching

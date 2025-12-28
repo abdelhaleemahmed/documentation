@@ -1,0 +1,147 @@
+version: 2.1
+
+# CircleCI Configuration Example
+# Complete CI/CD pipeline for Node.js applications
+
+orbs:
+  node: circleci/node@5.1.0
+  codecov: codecov/codecov@3.2.4
+
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:18.18
+    working_directory: ~/project
+
+jobs:
+  # Install dependencies
+  install:
+    executor: node-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .
+
+  # Lint code
+  lint:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Run ESLint
+          command: npm run lint
+
+  # Run tests
+  test:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Run tests
+          command: npm test
+      - run:
+          name: Generate coverage report
+          command: npm run test:coverage
+      - codecov/upload:
+          file: coverage/lcov.info
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+
+  # Build application
+  build:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Build application
+          command: npm run build
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - dist
+
+  # Deploy to staging
+  deploy-staging:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Deploy to staging
+          command: |
+            echo "Deploying to staging environment..."
+            # Add your deployment commands here
+            # Example: npm run deploy:staging
+
+  # Deploy to production
+  deploy-production:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Deploy to production
+          command: |
+            echo "Deploying to production environment..."
+            # Add your deployment commands here
+            # Example: npm run deploy:production
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - install
+      - lint:
+          requires:
+            - install
+      - test:
+          requires:
+            - install
+      - build:
+          requires:
+            - lint
+            - test
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - deploy-production:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
+      - hold-production:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
+      - deploy-production:
+          requires:
+            - hold-production
+          filters:
+            branches:
+              only: main

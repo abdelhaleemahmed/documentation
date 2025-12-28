@@ -1,0 +1,10 @@
+# Exercise 6: Anchors & Aliases
+# TODO: Create a multi-environment config using anchors
+
+# Create an anchor named 'defaults' with:
+# - timeout: 30
+# - retries: 3
+# - pool_size: 10
+
+# Then create dev, staging, and production environments
+# that merge these defaults and add their own values

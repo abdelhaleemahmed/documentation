@@ -1,0 +1,153 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-backup
+spec:
+  schedule: "0 2 * * *"  # Run at 2:00 AM every day
+  timeZone: "America/New_York"  # Optional: specify timezone
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: postgres:15-alpine
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Starting database backup at $(date)"
+              pg_dump -h $DB_HOST -U $DB_USER $DB_NAME > /backup/db-backup-$(date +%Y%m%d-%H%M%S).sql
+              echo "Backup completed at $(date)"
+            env:
+            - name: DB_HOST
+              value: "postgres-service"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: DB_NAME
+              value: "myapp"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-pvc
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cleanup-old-logs
+spec:
+  schedule: "0 0 * * 0"  # Run at midnight every Sunday
+  concurrencyPolicy: Replace
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cleanup
+            image: busybox:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Cleaning up logs older than 30 days"
+              find /logs -name "*.log" -mtime +30 -delete
+              echo "Cleanup completed"
+            volumeMounts:
+            - name: log-storage
+              mountPath: /logs
+          restartPolicy: OnFailure
+          volumes:
+          - name: log-storage
+            persistentVolumeClaim:
+              claimName: logs-pvc
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: send-daily-report
+spec:
+  schedule: "0 9 * * 1-5"  # Run at 9:00 AM Monday-Friday
+  concurrencyPolicy: Allow
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 2  # Retry up to 2 times
+      template:
+        spec:
+          containers:
+          - name: report
+            image: curlimages/curl:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Generating daily report..."
+              curl -X POST https://api.example.com/reports/daily \
+                -H "Authorization: Bearer ${API_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d '{"date":"$(date +%Y-%m-%d)"}'
+              echo "Report sent successfully"
+            env:
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: api-credentials
+                  key: token
+          restartPolicy: Never
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+type: Opaque
+data:
+  username: cG9zdGdyZXM=  # postgres
+  password: cGFzc3dvcmQxMjM=  # password123
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-credentials
+type: Opaque
+data:
+  token: bXktc2VjcmV0LXRva2Vu  # my-secret-token
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: logs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

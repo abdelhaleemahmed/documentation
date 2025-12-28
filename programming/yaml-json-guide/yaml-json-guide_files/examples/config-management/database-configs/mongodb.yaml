@@ -1,0 +1,72 @@
+# MongoDB Configuration
+# Replica set configuration for high availability
+
+environments:
+  development:
+    mongodb:
+      connection:
+        host: localhost
+        port: 27017
+        database: myapp_dev
+        username: ${MONGO_USERNAME}
+        password: ${MONGO_PASSWORD}
+        authSource: admin
+      options:
+        maxPoolSize: 10
+        minPoolSize: 2
+        serverSelectionTimeoutMS: 5000
+        socketTimeoutMS: 45000
+
+  staging:
+    mongodb:
+      connection:
+        replicaSet: staging-rs
+        hosts:
+          - staging-mongo1.example.com:27017
+          - staging-mongo2.example.com:27017
+          - staging-mongo3.example.com:27017
+        database: myapp_staging
+        username: ${MONGO_USERNAME}
+        password: ${MONGO_PASSWORD}
+        authSource: admin
+        ssl: true
+        sslCertificateKeyFile: /etc/ssl/mongodb/client.pem
+      options:
+        maxPoolSize: 50
+        minPoolSize: 10
+        readPreference: secondaryPreferred
+        retryWrites: true
+        w: majority
+
+  production:
+    mongodb:
+      connection:
+        replicaSet: prod-rs
+        hosts:
+          - prod-mongo1.example.com:27017
+          - prod-mongo2.example.com:27017
+          - prod-mongo3.example.com:27017
+        database: myapp_prod
+        username: ${MONGO_USERNAME}
+        password: ${MONGO_PASSWORD}
+        authSource: admin
+        ssl: true
+        sslCertificateKeyFile: /etc/ssl/mongodb/client.pem
+      options:
+        maxPoolSize: 200
+        minPoolSize: 20
+        readPreference: primaryPreferred
+        readConcern: majority
+        writeConcern:
+          w: majority
+          wtimeout: 5000
+        retryWrites: true
+        retryReads: true
+        serverSelectionTimeoutMS: 5000
+        socketTimeoutMS: 45000
+        heartbeatFrequencyMS: 10000
+      backup:
+        enabled: true
+        method: mongodump
+        schedule: "0 2 * * *"
+        retention_days: 30

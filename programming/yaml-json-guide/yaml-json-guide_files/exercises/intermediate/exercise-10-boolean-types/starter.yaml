@@ -1,0 +1,14 @@
+# Exercise 10: Boolean Types
+# TODO: Fix the types - ensure strings stay strings, booleans stay booleans
+
+settings:
+  debug: true
+  ssl: false
+  country_code: NO      # Fix: Should be string "NO"
+  answer: no            # Fix: Should be string "no"
+  status: on            # Fix: Should be string "on"
+  flags:
+    - yes              # Should be boolean
+    - yes              # Fix: Should be string "yes"
+    - no               # Should be boolean
+    - no               # Fix: Should be string "no"

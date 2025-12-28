@@ -1,0 +1,132 @@
+# Production Environment Configuration
+
+environment: production
+
+application:
+  name: MyApp
+  version: "1.0.0"
+  debug: false
+  log_level: WARNING
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  workers: 16
+  reload: false
+  timeout: 60
+  keepalive: 5
+
+database:
+  host: prod-db-primary.example.com
+  port: 5432
+  name: myapp_prod
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  pool_size: 100
+  max_overflow: 50
+  pool_timeout: 30
+  pool_recycle: 3600
+  echo_sql: false
+  ssl:
+    enabled: true
+    ca_cert: /etc/ssl/certs/ca-bundle.crt
+    verify_identity: true
+  read_replicas:
+    - host: prod-db-replica1.example.com
+      port: 5432
+    - host: prod-db-replica2.example.com
+      port: 5432
+
+cache:
+  enabled: true
+  backend: redis
+  redis:
+    cluster: true
+    nodes:
+      - host: prod-redis1.example.com
+        port: 6379
+      - host: prod-redis2.example.com
+        port: 6379
+      - host: prod-redis3.example.com
+        port: 6379
+    password: ${REDIS_PASSWORD}
+    ssl: true
+  ttl: 3600
+
+api:
+  base_url: https://api.example.com
+  timeout: 30
+  debug: false
+  rate_limit:
+    enabled: true
+    requests_per_second: 100
+
+external_services:
+  payment_gateway:
+    url: https://api.payment.example.com
+    api_key: ${PAYMENT_API_KEY_PROD}
+    webhook_url: https://api.example.com/webhooks/payment
+    retry_attempts: 5
+    circuit_breaker:
+      enabled: true
+      failure_threshold: 5
+      timeout: 60
+
+  email_service:
+    provider: ses
+    region: us-east-1
+    access_key: ${AWS_ACCESS_KEY_ID}
+    secret_key: ${AWS_SECRET_ACCESS_KEY}
+    from_address: noreply@example.com
+    configuration_set: production-emails
+
+  storage:
+    provider: s3
+    bucket: myapp-production-storage
+    region: us-east-1
+    access_key: ${AWS_ACCESS_KEY_ID}
+    secret_key: ${AWS_SECRET_ACCESS_KEY}
+    cdn:
+      enabled: true
+      domain: cdn.example.com
+
+cors:
+  enabled: true
+  origins:
+    - https://example.com
+    - https://www.example.com
+    - https://admin.example.com
+
+features:
+  analytics: true
+  rate_limiting: true
+  caching: true
+  email_notifications: true
+
+monitoring:
+  enabled: true
+  service: datadog
+  api_key: ${DATADOG_API_KEY}
+  tags:
+    - env:production
+    - service:myapp
+  apm:
+    enabled: true
+    sample_rate: 0.1
+
+security:
+  encryption:
+    enabled: true
+    algorithm: AES-256-GCM
+  firewall:
+    enabled: true
+    allowed_ips:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention_days: 30
+  destinations:
+    - s3://myapp-backups/database

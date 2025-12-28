@@ -1,0 +1,9 @@
+# Exercise 3: Fixed YAML - Solution
+
+server:
+  host: localhost
+  port: 8080
+  country: "NO"  # Quoted to prevent boolean conversion
+  features:
+    - authentication
+    - caching

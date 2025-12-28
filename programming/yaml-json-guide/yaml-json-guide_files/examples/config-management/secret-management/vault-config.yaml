@@ -1,0 +1,89 @@
+# HashiCorp Vault Integration Configuration
+# Using Vault for centralized secret management
+
+vault:
+  address: https://vault.example.com:8200
+  token: ${VAULT_TOKEN}
+  namespace: myapp
+
+  # Authentication methods
+  auth:
+    method: kubernetes  # or: token, approle, aws, azure
+    role: myapp-prod
+    service_account: myapp-sa
+
+  # Secret paths
+  secrets:
+    database:
+      path: secret/data/myapp/database
+      keys:
+        - username
+        - password
+        - connection_string
+      refresh_interval: 3600
+
+    api_keys:
+      path: secret/data/myapp/api-keys
+      keys:
+        - payment_gateway
+        - analytics
+        - email_service
+      refresh_interval: 7200
+
+    certificates:
+      path: pki/issue/myapp-prod
+      common_name: api.example.com
+      alt_names:
+        - www.example.com
+        - admin.example.com
+      ttl: 8760h  # 1 year
+      refresh_before_expiry: 720h  # 30 days
+
+  # Dynamic secrets
+  dynamic:
+    database:
+      enabled: true
+      path: database/creds/myapp-role
+      ttl: 1h
+      max_ttl: 24h
+
+  # Encryption as a Service
+  transit:
+    enabled: true
+    key_name: myapp-encryption
+    mount_point: transit
+
+# Application configuration using Vault secrets
+application:
+  database:
+    host: prod.db.example.com
+    port: 5432
+    # Secrets injected from Vault at runtime
+    username: vault:secret/data/myapp/database#username
+    password: vault:secret/data/myapp/database#password
+
+  api:
+    endpoint: https://api.example.com
+    api_key: vault:secret/data/myapp/api-keys#payment_gateway
+
+  encryption:
+    provider: vault-transit
+    key: myapp-encryption
+
+# Vault agent configuration (sidecar)
+vault_agent:
+  auto_auth:
+    method:
+      type: kubernetes
+      mount_path: auth/kubernetes
+      config:
+        role: myapp-prod
+
+  template:
+    - source: /vault/configs/database.tpl
+      destination: /app/config/database.yaml
+
+  sink:
+    - type: file
+      config:
+        path: /vault/.vault-token

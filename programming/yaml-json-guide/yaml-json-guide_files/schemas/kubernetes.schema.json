@@ -1,0 +1,256 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/kubernetes.schema.json",
+  "title": "Kubernetes Deployment Schema",
+  "description": "Simplified JSON Schema for Kubernetes Deployment objects",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "description": "API version",
+      "enum": ["apps/v1"],
+      "examples": ["apps/v1"]
+    },
+    "kind": {
+      "type": "string",
+      "description": "Resource kind",
+      "const": "Deployment"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Resource metadata",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Deployment name",
+          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+          "maxLength": 253
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Namespace",
+          "default": "default",
+          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+        },
+        "labels": {
+          "type": "object",
+          "description": "Labels",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Annotations",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "description": "Deployment specification",
+      "required": ["selector", "template"],
+      "properties": {
+        "replicas": {
+          "type": "integer",
+          "description": "Number of replicas",
+          "minimum": 0,
+          "default": 1,
+          "examples": [1, 3, 5]
+        },
+        "selector": {
+          "type": "object",
+          "description": "Label selector",
+          "required": ["matchLabels"],
+          "properties": {
+            "matchLabels": {
+              "type": "object",
+              "description": "Match labels",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "minProperties": 1
+            }
+          }
+        },
+        "template": {
+          "type": "object",
+          "description": "Pod template",
+          "required": ["metadata", "spec"],
+          "properties": {
+            "metadata": {
+              "type": "object",
+              "description": "Pod metadata",
+              "required": ["labels"],
+              "properties": {
+                "labels": {
+                  "type": "object",
+                  "description": "Pod labels",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "minProperties": 1
+                }
+              }
+            },
+            "spec": {
+              "type": "object",
+              "description": "Pod specification",
+              "required": ["containers"],
+              "properties": {
+                "containers": {
+                  "type": "array",
+                  "description": "Container list",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "image"],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Container name",
+                        "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "Container image",
+                        "minLength": 1,
+                        "examples": ["nginx:1.21", "myapp:latest"]
+                      },
+                      "imagePullPolicy": {
+                        "type": "string",
+                        "description": "Image pull policy",
+                        "enum": ["Always", "IfNotPresent", "Never"],
+                        "default": "IfNotPresent"
+                      },
+                      "ports": {
+                        "type": "array",
+                        "description": "Container ports",
+                        "items": {
+                          "type": "object",
+                          "required": ["containerPort"],
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "Port name"
+                            },
+                            "containerPort": {
+                              "type": "integer",
+                              "description": "Port number",
+                              "minimum": 1,
+                              "maximum": 65535
+                            },
+                            "protocol": {
+                              "type": "string",
+                              "description": "Protocol",
+                              "enum": ["TCP", "UDP", "SCTP"],
+                              "default": "TCP"
+                            }
+                          }
+                        }
+                      },
+                      "env": {
+                        "type": "array",
+                        "description": "Environment variables",
+                        "items": {
+                          "type": "object",
+                          "required": ["name"],
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "Variable name"
+                            },
+                            "value": {
+                              "type": "string",
+                              "description": "Variable value"
+                            }
+                          }
+                        }
+                      },
+                      "resources": {
+                        "type": "object",
+                        "description": "Resource requirements",
+                        "properties": {
+                          "requests": {
+                            "type": "object",
+                            "description": "Resource requests",
+                            "properties": {
+                              "cpu": {
+                                "type": "string",
+                                "description": "CPU request",
+                                "examples": ["100m", "250m", "1"]
+                              },
+                              "memory": {
+                                "type": "string",
+                                "description": "Memory request",
+                                "examples": ["64Mi", "128Mi", "1Gi"]
+                              }
+                            }
+                          },
+                          "limits": {
+                            "type": "object",
+                            "description": "Resource limits",
+                            "properties": {
+                              "cpu": {
+                                "type": "string",
+                                "description": "CPU limit",
+                                "examples": ["200m", "500m", "2"]
+                              },
+                              "memory": {
+                                "type": "string",
+                                "description": "Memory limit",
+                                "examples": ["128Mi", "256Mi", "2Gi"]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "strategy": {
+          "type": "object",
+          "description": "Deployment strategy",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Strategy type",
+              "enum": ["RollingUpdate", "Recreate"],
+              "default": "RollingUpdate"
+            },
+            "rollingUpdate": {
+              "type": "object",
+              "description": "Rolling update config",
+              "properties": {
+                "maxSurge": {
+                  "description": "Max surge",
+                  "oneOf": [
+                    {"type": "integer", "minimum": 0},
+                    {"type": "string", "pattern": "^[0-9]+%$"}
+                  ],
+                  "default": 1
+                },
+                "maxUnavailable": {
+                  "description": "Max unavailable",
+                  "oneOf": [
+                    {"type": "integer", "minimum": 0},
+                    {"type": "string", "pattern": "^[0-9]+%$"}
+                  ],
+                  "default": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

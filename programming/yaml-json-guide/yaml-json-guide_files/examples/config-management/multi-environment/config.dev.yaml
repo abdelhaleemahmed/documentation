@@ -1,0 +1,60 @@
+# Development Environment Configuration
+
+environment: development
+
+application:
+  name: MyApp
+  version: "1.0.0"
+  debug: true
+  log_level: DEBUG
+
+server:
+  host: localhost
+  port: 8080
+  workers: 2
+  reload: true  # Hot reload for development
+
+database:
+  host: localhost
+  port: 5432
+  name: myapp_dev
+  username: dev_user
+  password: dev_password
+  pool_size: 5
+  echo_sql: true  # Log all SQL queries
+
+cache:
+  enabled: true
+  backend: memory  # Simple in-memory cache
+  ttl: 300
+
+api:
+  base_url: http://localhost:8080
+  timeout: 30
+  debug: true
+
+external_services:
+  payment_gateway:
+    url: https://sandbox.payment.example.com
+    api_key: ${PAYMENT_API_KEY_DEV}
+    webhook_url: http://localhost:8080/webhooks/payment
+
+  email_service:
+    provider: console  # Print emails to console
+    from_address: dev@example.com
+
+  storage:
+    provider: local
+    path: ./storage/dev
+
+cors:
+  enabled: true
+  origins:
+    - http://localhost:3000
+    - http://localhost:8080
+
+features:
+  analytics: false
+  rate_limiting: false
+  caching: false
+  email_notifications: false

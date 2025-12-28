@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/app-config.schema.json",
+  "title": "Application Configuration Schema",
+  "description": "JSON Schema for application configuration files",
+  "type": "object",
+  "required": ["app", "server"],
+  "properties": {
+    "app": {
+      "type": "object",
+      "description": "Application metadata",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Application name",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[a-zA-Z0-9-_]+$",
+          "examples": ["myapp", "user-service"]
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "examples": ["1.0.0", "2.3.1"]
+        },
+        "environment": {
+          "type": "string",
+          "description": "Deployment environment",
+          "enum": ["development", "staging", "production"],
+          "default": "development"
+        },
+        "description": {
+          "type": "string",
+          "description": "Application description",
+          "maxLength": 500
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "description": "Server configuration",
+      "required": ["port"],
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "Server host address",
+          "format": "hostname",
+          "default": "localhost",
+          "examples": ["localhost", "0.0.0.0", "example.com"]
+        },
+        "port": {
+          "type": "integer",
+          "description": "Server port number",
+          "minimum": 1,
+          "maximum": 65535,
+          "examples": [3000, 8080, 8443]
+        },
+        "ssl": {
+          "type": "boolean",
+          "description": "Enable SSL/TLS",
+          "default": false
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Request timeout in seconds",
+          "minimum": 1,
+          "maximum": 300,
+          "default": 30
+        }
+      }
+    },
+    "database": {
+      "type": "object",
+      "description": "Database configuration",
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "Database host",
+          "examples": ["localhost", "db.example.com"]
+        },
+        "port": {
+          "type": "integer",
+          "description": "Database port",
+          "minimum": 1,
+          "maximum": 65535,
+          "examples": [5432, 3306, 27017]
+        },
+        "database": {
+          "type": "string",
+          "description": "Database name",
+          "minLength": 1
+        },
+        "username": {
+          "type": "string",
+          "description": "Database username"
+        },
+        "pool": {
+          "type": "object",
+          "description": "Connection pool settings",
+          "properties": {
+            "min": {
+              "type": "integer",
+              "description": "Minimum connections",
+              "minimum": 0,
+              "default": 2
+            },
+            "max": {
+              "type": "integer",
+              "description": "Maximum connections",
+              "minimum": 1,
+              "default": 10
+            },
+            "idle_timeout": {
+              "type": "integer",
+              "description": "Idle timeout in seconds",
+              "minimum": 1,
+              "default": 30
+            }
+          }
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "description": "Logging configuration",
+      "properties": {
+        "level": {
+          "type": "string",
+          "description": "Log level",
+          "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+          "default": "INFO"
+        },
+        "format": {
+          "type": "string",
+          "description": "Log format",
+          "enum": ["json", "text"],
+          "default": "json"
+        },
+        "output": {
+          "type": "string",
+          "description": "Log output destination",
+          "enum": ["stdout", "stderr", "file"],
+          "default": "stdout"
+        },
+        "file": {
+          "type": "string",
+          "description": "Log file path (if output is 'file')"
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "description": "Feature flags",
+      "properties": {
+        "authentication": {
+          "type": "boolean",
+          "description": "Enable authentication",
+          "default": true
+        },
+        "caching": {
+          "type": "boolean",
+          "description": "Enable caching",
+          "default": false
+        },
+        "rate_limiting": {
+          "type": "boolean",
+          "description": "Enable rate limiting",
+          "default": true
+        },
+        "analytics": {
+          "type": "boolean",
+          "description": "Enable analytics",
+          "default": false
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "app": {
+        "name": "myapp",
+        "version": "1.0.0",
+        "environment": "production"
+      },
+      "server": {
+        "host": "0.0.0.0",
+        "port": 8080,
+        "ssl": true,
+        "timeout": 30
+      },
+      "database": {
+        "host": "db.example.com",
+        "port": 5432,
+        "database": "myapp",
+        "username": "appuser",
+        "pool": {
+          "min": 2,
+          "max": 10,
+          "idle_timeout": 30
+        }
+      },
+      "logging": {
+        "level": "INFO",
+        "format": "json",
+        "output": "stdout"
+      },
+      "features": {
+        "authentication": true,
+        "caching": true,
+        "rate_limiting": true,
+        "analytics": false
+      }
+    }
+  ]
+}

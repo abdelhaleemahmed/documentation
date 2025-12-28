@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User Profile Schema",
+  "type": "object",
+  "required": ["name", "email", "age"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 18
+    },
+    "bio": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "website": {
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}

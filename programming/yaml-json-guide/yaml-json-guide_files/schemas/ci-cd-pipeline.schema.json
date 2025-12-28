@@ -1,0 +1,283 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/ci-cd-pipeline.schema.json",
+  "title": "GitHub Actions Workflow Schema",
+  "description": "Simplified JSON Schema for GitHub Actions workflows",
+  "type": "object",
+  "required": ["name", "on", "jobs"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Workflow name",
+      "minLength": 1,
+      "examples": ["CI Pipeline", "Deploy to Production"]
+    },
+    "on": {
+      "description": "Workflow triggers",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["push", "pull_request", "workflow_dispatch"]
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "push": {
+              "type": "object",
+              "properties": {
+                "branches": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "examples": [["main", "develop"]]
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              }
+            },
+            "pull_request": {
+              "type": "object",
+              "properties": {
+                "branches": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["opened", "synchronize", "reopened", "closed"]
+                  }
+                }
+              }
+            },
+            "schedule": {
+              "type": "array",
+              "description": "Cron schedule",
+              "items": {
+                "type": "object",
+                "required": ["cron"],
+                "properties": {
+                  "cron": {
+                    "type": "string",
+                    "description": "Cron expression",
+                    "examples": ["0 0 * * *", "*/15 * * * *"]
+                  }
+                }
+              }
+            },
+            "workflow_dispatch": {
+              "type": "object",
+              "description": "Manual trigger"
+            }
+          }
+        }
+      ]
+    },
+    "env": {
+      "type": "object",
+      "description": "Global environment variables",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "jobs": {
+      "type": "object",
+      "description": "Workflow jobs",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["runs-on", "steps"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Job name"
+          },
+          "runs-on": {
+            "description": "Runner type",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": ["ubuntu-latest", "ubuntu-22.04", "ubuntu-20.04", "windows-latest", "macos-latest"]
+              },
+              {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            ],
+            "examples": ["ubuntu-latest", "windows-latest"]
+          },
+          "needs": {
+            "description": "Job dependencies",
+            "oneOf": [
+              {"type": "string"},
+              {"type": "array", "items": {"type": "string"}}
+            ]
+          },
+          "if": {
+            "type": "string",
+            "description": "Conditional execution",
+            "examples": ["github.ref == 'refs/heads/main'", "success()"]
+          },
+          "strategy": {
+            "type": "object",
+            "description": "Matrix strategy",
+            "properties": {
+              "matrix": {
+                "type": "object",
+                "description": "Matrix configuration",
+                "additionalProperties": {
+                  "type": "array"
+                }
+              },
+              "fail-fast": {
+                "type": "boolean",
+                "description": "Stop on first failure",
+                "default": true
+              }
+            }
+          },
+          "env": {
+            "type": "object",
+            "description": "Job environment variables",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "steps": {
+            "type": "array",
+            "description": "Job steps",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Step name"
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Step identifier"
+                },
+                "if": {
+                  "type": "string",
+                  "description": "Conditional execution"
+                },
+                "uses": {
+                  "type": "string",
+                  "description": "Action to use",
+                  "examples": ["actions/checkout@v4", "actions/setup-node@v3"]
+                },
+                "with": {
+                  "type": "object",
+                  "description": "Action inputs",
+                  "additionalProperties": true
+                },
+                "run": {
+                  "type": "string",
+                  "description": "Command to run",
+                  "examples": ["npm install", "npm test", "./deploy.sh"]
+                },
+                "env": {
+                  "type": "object",
+                  "description": "Step environment variables",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "continue-on-error": {
+                  "type": "boolean",
+                  "description": "Continue on error",
+                  "default": false
+                },
+                "timeout-minutes": {
+                  "type": "integer",
+                  "description": "Timeout in minutes",
+                  "minimum": 1,
+                  "maximum": 360,
+                  "default": 360
+                }
+              }
+            }
+          },
+          "timeout-minutes": {
+            "type": "integer",
+            "description": "Job timeout in minutes",
+            "minimum": 1,
+            "maximum": 360,
+            "default": 360
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "CI/CD Pipeline",
+      "on": {
+        "push": {
+          "branches": ["main"]
+        },
+        "pull_request": {
+          "branches": ["main"]
+        }
+      },
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "jobs": {
+        "test": {
+          "name": "Run Tests",
+          "runs-on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": "Checkout code",
+              "uses": "actions/checkout@v4"
+            },
+            {
+              "name": "Setup Node.js",
+              "uses": "actions/setup-node@v3",
+              "with": {
+                "node-version": "18"
+              }
+            },
+            {
+              "name": "Install dependencies",
+              "run": "npm ci"
+            },
+            {
+              "name": "Run tests",
+              "run": "npm test"
+            }
+          ]
+        },
+        "deploy": {
+          "name": "Deploy to Production",
+          "runs-on": "ubuntu-latest",
+          "needs": "test",
+          "if": "github.ref == 'refs/heads/main'",
+          "steps": [
+            {
+              "name": "Checkout code",
+              "uses": "actions/checkout@v4"
+            },
+            {
+              "name": "Deploy",
+              "run": "./deploy.sh",
+              "env": {
+                "DEPLOY_KEY": "${{ secrets.DEPLOY_KEY }}"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

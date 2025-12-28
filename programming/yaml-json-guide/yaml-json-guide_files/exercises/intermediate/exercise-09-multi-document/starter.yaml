@@ -1,0 +1,8 @@
+# Exercise 9: Multi-Document YAML
+# TODO: Create 3 Kubernetes resources in one file
+
+# Document 1: ConfigMap
+# Document 2: Service
+# Document 3: Deployment
+
+# Use --- to separate documents

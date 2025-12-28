@@ -1,0 +1,40 @@
+{
+  "app": {
+    "name": "MyApp",
+    "version": "1.0.0"
+  },
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "email": "alice@example.com",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "email": "bob@example.com",
+      "active": false
+    },
+    {
+      "id": 3,
+      "name": "Charlie",
+      "email": "charlie@example.com",
+      "active": true
+    }
+  ],
+  "services": [
+    {
+      "name": "web",
+      "port": 80
+    },
+    {
+      "name": "api",
+      "port": 8080
+    },
+    {
+      "name": "admin",
+      "port": 8080
+    }
+  ]
+}

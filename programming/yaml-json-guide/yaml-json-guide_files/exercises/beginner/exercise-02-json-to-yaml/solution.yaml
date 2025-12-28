@@ -1,0 +1,10 @@
+# Exercise 2: Convert JSON to YAML - Solution
+
+database:
+  host: localhost
+  port: 5432
+  name: myapp
+  users:
+    - admin
+    - developer
+    - readonly

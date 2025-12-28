@@ -1,0 +1,58 @@
+# Exercise 14: Fixed Configuration - Solution
+# All errors corrected with explanations
+
+application:
+  name: MyApp
+  version: "1.20"  # ✓ Quoted to keep as string
+  enabled: true  # ✓ Explicit boolean
+  country_code: "NO"  # ✓ Quoted to prevent boolean conversion
+
+database:
+  host: localhost
+  port: 5432
+  username: ${DB_USERNAME}  # ✓ Environment variable
+  password: ${DB_PASSWORD}  # ✓ No hardcoded secret
+
+# ✓ Correct indentation
+server:
+  host: 0.0.0.0
+  port: 8080
+  timeout: 30  # ✓ Fixed indentation
+  retries: 3
+
+# ✓ Define anchor before use
+api_defaults: &api_defaults
+  timeout: 30
+  retries: 3
+
+# ✓ Reference after definition
+api_client: *api_defaults
+
+api:
+  endpoints:
+    - url: https://api.example.com
+      method: GET
+    - url: https://api.example.com/users
+      method: POST
+      headers:
+        Content-Type: application/json
+        Authorization: "Bearer ${API_TOKEN}"  # ✓ Closed quote + env var
+
+# ✓ Single logging configuration (removed duplicate)
+logging:
+  level: DEBUG
+  format: json
+  file: app.log
+
+# ✓ Explicit boolean values
+features:
+  cache_enabled: true  # ✓ Lowercase boolean
+  debug_mode: false  # ✓ Explicit boolean (not "OFF")
+  maintenance: false  # ✓ Explicit boolean (not "on")
+
+# ✓ Correct list indentation
+supported_formats:
+  - json
+  - yaml
+  - xml  # ✓ Fixed indentation
+  - csv

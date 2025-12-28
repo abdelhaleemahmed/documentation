@@ -1,0 +1,37 @@
+# Exercise 13: Broken Kubernetes Deployment
+# Find and fix all the errors!
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+  labels:
+    app: web
+spec:
+  replicas: 3
+  selector:
+  matchLabels:
+      app: webapp  # ❌ Mismatch with metadata.labels
+  template:
+    metadata:
+    labels:
+        app: web
+    spec:
+    containers:
+      - name: nginx
+      image: nginx:1.21
+      ports:
+      - containerPort: 80
+        # ❌ Missing resource limits
+        # ❌ Missing health checks
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  # ❌ Missing selector
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer

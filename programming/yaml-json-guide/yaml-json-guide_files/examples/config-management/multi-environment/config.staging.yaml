@@ -1,0 +1,85 @@
+# Staging Environment Configuration
+
+environment: staging
+
+application:
+  name: MyApp
+  version: "1.0.0"
+  debug: false
+  log_level: INFO
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  workers: 4
+  reload: false
+
+database:
+  host: staging-db.example.com
+  port: 5432
+  name: myapp_staging
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  pool_size: 20
+  echo_sql: false
+  ssl:
+    enabled: true
+    ca_cert: /etc/ssl/certs/ca-bundle.crt
+
+cache:
+  enabled: true
+  backend: redis
+  redis:
+    host: staging-redis.example.com
+    port: 6379
+    db: 0
+    password: ${REDIS_PASSWORD}
+  ttl: 600
+
+api:
+  base_url: https://staging.example.com
+  timeout: 30
+  debug: false
+
+external_services:
+  payment_gateway:
+    url: https://sandbox.payment.example.com
+    api_key: ${PAYMENT_API_KEY_STAGING}
+    webhook_url: https://staging.example.com/webhooks/payment
+    retry_attempts: 3
+
+  email_service:
+    provider: smtp
+    host: smtp.example.com
+    port: 587
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    from_address: staging@example.com
+    use_tls: true
+
+  storage:
+    provider: s3
+    bucket: myapp-staging-storage
+    region: us-east-1
+    access_key: ${AWS_ACCESS_KEY_ID}
+    secret_key: ${AWS_SECRET_ACCESS_KEY}
+
+cors:
+  enabled: true
+  origins:
+    - https://staging.example.com
+    - https://staging-admin.example.com
+
+features:
+  analytics: true
+  rate_limiting: true
+  caching: true
+  email_notifications: true
+
+monitoring:
+  enabled: true
+  service: datadog
+  api_key: ${DATADOG_API_KEY}
+  tags:
+    - env:staging
+    - service:myapp

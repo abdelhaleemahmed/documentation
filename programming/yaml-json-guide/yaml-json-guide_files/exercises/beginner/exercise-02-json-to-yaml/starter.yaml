@@ -1,0 +1,10 @@
+# Exercise 2: Convert JSON to YAML
+# TODO: Convert the JSON from input.json to YAML format
+
+# Hint: Look at the JSON structure and convert it:
+# - Remove braces {} and brackets []
+# - Use indentation instead of braces
+# - Use - for list items
+# - Remove commas
+
+# Write your YAML conversion here:

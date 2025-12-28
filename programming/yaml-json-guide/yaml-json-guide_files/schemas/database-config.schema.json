@@ -1,0 +1,208 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/database-config.schema.json",
+  "title": "Database Configuration Schema",
+  "description": "JSON Schema for database configuration files",
+  "type": "object",
+  "required": ["type", "connection"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Database type",
+      "enum": ["postgresql", "mysql", "mongodb", "redis", "sqlite"],
+      "examples": ["postgresql", "mysql"]
+    },
+    "connection": {
+      "type": "object",
+      "description": "Connection settings",
+      "required": ["host", "port", "database"],
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "Database host",
+          "format": "hostname",
+          "examples": ["localhost", "db.example.com", "192.168.1.100"]
+        },
+        "port": {
+          "type": "integer",
+          "description": "Database port",
+          "minimum": 1,
+          "maximum": 65535,
+          "examples": [5432, 3306, 27017, 6379]
+        },
+        "database": {
+          "type": "string",
+          "description": "Database name",
+          "minLength": 1,
+          "examples": ["myapp", "production_db"]
+        },
+        "username": {
+          "type": "string",
+          "description": "Database username",
+          "minLength": 1
+        },
+        "password": {
+          "type": "string",
+          "description": "Database password (use environment variables in production)"
+        },
+        "ssl": {
+          "type": "boolean",
+          "description": "Enable SSL/TLS connection",
+          "default": false
+        },
+        "ssl_mode": {
+          "type": "string",
+          "description": "SSL mode (PostgreSQL)",
+          "enum": ["disable", "allow", "prefer", "require", "verify-ca", "verify-full"],
+          "default": "prefer"
+        }
+      }
+    },
+    "pool": {
+      "type": "object",
+      "description": "Connection pool configuration",
+      "properties": {
+        "min": {
+          "type": "integer",
+          "description": "Minimum pool size",
+          "minimum": 0,
+          "default": 2,
+          "examples": [2, 5]
+        },
+        "max": {
+          "type": "integer",
+          "description": "Maximum pool size",
+          "minimum": 1,
+          "default": 10,
+          "examples": [10, 20, 50]
+        },
+        "idle_timeout": {
+          "type": "integer",
+          "description": "Idle connection timeout in seconds",
+          "minimum": 1,
+          "default": 30,
+          "examples": [30, 60, 300]
+        },
+        "connect_timeout": {
+          "type": "integer",
+          "description": "Connection timeout in seconds",
+          "minimum": 1,
+          "default": 10,
+          "examples": [5, 10, 30]
+        },
+        "acquire_timeout": {
+          "type": "integer",
+          "description": "Acquire connection timeout in seconds",
+          "minimum": 1,
+          "default": 30
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "description": "Retry configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable automatic retries",
+          "default": true
+        },
+        "max_attempts": {
+          "type": "integer",
+          "description": "Maximum retry attempts",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 3
+        },
+        "backoff_ms": {
+          "type": "integer",
+          "description": "Backoff time in milliseconds",
+          "minimum": 100,
+          "default": 1000
+        },
+        "exponential": {
+          "type": "boolean",
+          "description": "Use exponential backoff",
+          "default": true
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "description": "Additional database options",
+      "additionalProperties": true,
+      "properties": {
+        "charset": {
+          "type": "string",
+          "description": "Character set",
+          "examples": ["utf8", "utf8mb4"]
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Database timezone",
+          "examples": ["UTC", "America/New_York"]
+        },
+        "statement_timeout": {
+          "type": "integer",
+          "description": "Statement timeout in milliseconds",
+          "minimum": 0
+        }
+      }
+    },
+    "migrations": {
+      "type": "object",
+      "description": "Migration configuration",
+      "properties": {
+        "auto_run": {
+          "type": "boolean",
+          "description": "Auto-run migrations on startup",
+          "default": false
+        },
+        "directory": {
+          "type": "string",
+          "description": "Migrations directory",
+          "default": "./migrations"
+        },
+        "table_name": {
+          "type": "string",
+          "description": "Migrations tracking table",
+          "default": "schema_migrations"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "type": "postgresql",
+      "connection": {
+        "host": "localhost",
+        "port": 5432,
+        "database": "myapp",
+        "username": "appuser",
+        "ssl": true,
+        "ssl_mode": "require"
+      },
+      "pool": {
+        "min": 2,
+        "max": 10,
+        "idle_timeout": 30,
+        "connect_timeout": 10
+      },
+      "retry": {
+        "enabled": true,
+        "max_attempts": 3,
+        "backoff_ms": 1000,
+        "exponential": true
+      },
+      "options": {
+        "timezone": "UTC",
+        "statement_timeout": 30000
+      },
+      "migrations": {
+        "auto_run": false,
+        "directory": "./migrations",
+        "table_name": "schema_migrations"
+      }
+    }
+  ]
+}

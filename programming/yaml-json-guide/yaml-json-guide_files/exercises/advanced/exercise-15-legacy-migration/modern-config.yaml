@@ -1,0 +1,68 @@
+# Exercise 15: Modern Configuration - Solution
+# Converted from legacy INI format with best practices applied
+
+application:
+  name: MyApp
+  version: "1.20"  # Quoted to preserve as string
+  enabled: true  # Explicit boolean
+  environment: production
+
+database:
+  host: prod.db.example.com
+  port: 5432
+  name: myapp_db
+  username: ${DB_USERNAME}  # Environment variable
+  password: ${DB_PASSWORD}  # Environment variable (never hardcode!)
+  pool:
+    size: 10
+    timeout: 30
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  workers: 4
+  timeout: 60
+  keep_alive: true  # Explicit boolean
+
+api:
+  base_url: https://api.example.com
+  api_key: ${API_KEY}  # Environment variable
+  timeout: 30
+  retries: 3
+  verify_ssl: true  # Explicit boolean
+
+cache:
+  enabled: true
+  backend: redis
+  redis:
+    host: localhost
+    port: 6379
+  ttl: 3600
+
+logging:
+  level: INFO
+  file: app.log
+  rotation:
+    max_size: 10485760  # 10MB
+    backup_count: 5
+  format: json
+
+features:
+  debug_mode: false  # Explicit boolean
+  maintenance_mode: false  # Explicit boolean
+  feature_x_enabled: true
+  feature_y_enabled: false
+
+smtp:
+  host: smtp.example.com
+  port: 587
+  use_tls: true
+  username: ${SMTP_USERNAME}  # Environment variable
+  password: ${SMTP_PASSWORD}  # Environment variable
+
+# Environment variables template (.env.example):
+# DB_USERNAME=your_username
+# DB_PASSWORD=your_password
+# API_KEY=your_api_key
+# SMTP_USERNAME=your_smtp_username
+# SMTP_PASSWORD=your_smtp_password

@@ -1,0 +1,75 @@
+# PostgreSQL Database Configuration
+# Production-grade PostgreSQL configuration with connection pooling
+
+environments:
+  development:
+    postgresql:
+      primary:
+        host: localhost
+        port: 5432
+        database: myapp_dev
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        sslmode: disable
+      connection:
+        pool_size: 5
+        max_overflow: 10
+        pool_timeout: 30
+      options:
+        client_encoding: UTF8
+        timezone: UTC
+        statement_timeout: 30000
+
+  staging:
+    postgresql:
+      primary:
+        host: staging-postgres.example.com
+        port: 5432
+        database: myapp_staging
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        sslmode: require
+        sslrootcert: /etc/ssl/certs/ca-bundle.crt
+      connection:
+        pool_size: 20
+        max_overflow: 30
+        pool_timeout: 30
+        pool_recycle: 3600
+      options:
+        statement_timeout: 60000
+        idle_in_transaction_session_timeout: 120000
+
+  production:
+    postgresql:
+      primary:
+        host: prod-postgres-primary.example.com
+        port: 5432
+        database: myapp_prod
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        sslmode: verify-full
+        sslrootcert: /etc/ssl/certs/ca-bundle.crt
+      connection:
+        pool_size: 100
+        max_overflow: 200
+        pool_timeout: 30
+        pool_recycle: 3600
+        pool_pre_ping: true
+      read_replicas:
+        enabled: true
+        hosts:
+          - host: prod-postgres-replica1.example.com
+            port: 5432
+          - host: prod-postgres-replica2.example.com
+            port: 5432
+      options:
+        statement_timeout: 30000
+        idle_in_transaction_session_timeout: 60000
+        log_statement: all
+        log_min_duration_statement: 1000
+      backup:
+        enabled: true
+        method: pg_dump
+        schedule: "0 2 * * *"
+        retention_days: 30
+        compression: gzip

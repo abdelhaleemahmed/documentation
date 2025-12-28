@@ -1,0 +1,24 @@
+# Exercise 6: Anchors & Aliases - Solution
+
+defaults: &defaults
+  timeout: 30
+  retries: 3
+  pool_size: 10
+
+development:
+  database:
+    <<: *defaults
+    host: localhost
+    debug: true
+
+staging:
+  database:
+    <<: *defaults
+    host: staging.db.example.com
+    debug: false
+
+production:
+  database:
+    <<: *defaults
+    host: prod.db.example.com
+    ssl: true

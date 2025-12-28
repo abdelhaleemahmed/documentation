@@ -1,0 +1,12 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "myapp",
+    "users": [
+      "admin",
+      "developer",
+      "readonly"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+# Exercise 1: Your First YAML File
+# TODO: Complete the configuration below
+
+# Create a configuration with these fields:
+# - app
+#   - name: "MyFirstApp"
+#   - version: "1.0.0"
+#   - port: 3000
+#   - debug: true
+
+# Write your YAML here:

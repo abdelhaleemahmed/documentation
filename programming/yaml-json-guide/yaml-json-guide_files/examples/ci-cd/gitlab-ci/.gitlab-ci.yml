@@ -1,0 +1,176 @@
+# GitLab CI/CD Configuration Example
+# Complete pipeline for Node.js applications
+
+# Define pipeline stages
+stages:
+  - install
+  - lint
+  - test
+  - build
+  - deploy
+
+# Global variables
+variables:
+  NODE_VERSION: "18"
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/.cache/Cypress"
+
+# Cache configuration
+.node_cache: &node_cache
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm
+      - node_modules
+      - .cache/Cypress
+    policy: pull
+
+# Base job template
+.node_job:
+  image: node:${NODE_VERSION}-alpine
+  before_script:
+    - node --version
+    - npm --version
+
+# Install dependencies
+install:
+  extends: .node_job
+  stage: install
+  cache:
+    <<: *node_cache
+    policy: pull-push
+  script:
+    - npm ci --prefer-offline --no-audit
+  artifacts:
+    paths:
+      - node_modules
+    expire_in: 1 day
+
+# Lint code
+lint:
+  extends: .node_job
+  stage: lint
+  <<: *node_cache
+  dependencies:
+    - install
+  script:
+    - npm run lint
+
+# Run unit tests
+test:unit:
+  extends: .node_job
+  stage: test
+  <<: *node_cache
+  dependencies:
+    - install
+  script:
+    - npm run test:unit
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    when: always
+    reports:
+      junit: junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage
+    expire_in: 30 days
+
+# Run integration tests
+test:integration:
+  extends: .node_job
+  stage: test
+  <<: *node_cache
+  dependencies:
+    - install
+  services:
+    - postgres:15-alpine
+  variables:
+    POSTGRES_DB: testdb
+    POSTGRES_USER: testuser
+    POSTGRES_PASSWORD: testpass
+    DATABASE_URL: "postgresql://testuser:testpass@postgres:5432/testdb"
+  script:
+    - npm run test:integration
+  artifacts:
+    when: always
+    reports:
+      junit: junit-integration.xml
+
+# Build application
+build:
+  extends: .node_job
+  stage: build
+  <<: *node_cache
+  dependencies:
+    - install
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+
+# Security scanning
+security:
+  extends: .node_job
+  stage: test
+  <<: *node_cache
+  dependencies:
+    - install
+  script:
+    - npm audit --audit-level=moderate
+  allow_failure: true
+
+# Deploy to staging
+deploy:staging:
+  extends: .node_job
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - echo "Deploying to staging environment..."
+    - npm run deploy:staging
+  environment:
+    name: staging
+    url: https://staging.example.com
+  only:
+    - develop
+  when: manual
+
+# Deploy to production
+deploy:production:
+  extends: .node_job
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - echo "Deploying to production environment..."
+    - npm run deploy:production
+  environment:
+    name: production
+    url: https://example.com
+  only:
+    - main
+  when: manual
+
+# Pages deployment (documentation)
+pages:
+  extends: .node_job
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - npm run docs:build
+    - mv docs public
+  artifacts:
+    paths:
+      - public
+  only:
+    - main

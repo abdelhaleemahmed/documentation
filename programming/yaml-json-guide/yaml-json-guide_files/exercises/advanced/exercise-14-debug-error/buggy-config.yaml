@@ -1,0 +1,62 @@
+# Exercise 14: Buggy Configuration
+# This file contains multiple realistic errors. Find and fix them all!
+
+application:
+  name: MyApp
+  version: 1.20  # Will become float instead of string
+  enabled: yes  # Will become boolean true
+  country_code: NO  # Will become boolean false!
+
+database:
+  host: localhost
+  port: 5432
+  username: admin
+  password: secret123  # ❌ Hardcoded secret
+
+# ❌ Wrong indentation below
+server:
+  host: 0.0.0.0
+  port: 8080
+   timeout: 30  # Extra space in indentation!
+  retries: 3
+
+# ❌ Anchor used before definition
+api_client: *api_defaults
+
+api:
+  endpoints:
+    - url: https://api.example.com
+      method: GET
+    - url: https://api.example.com/users
+      method: POST
+      headers:
+        Content-Type: application/json
+        # ❌ Missing closing quote
+        Authorization: "Bearer abc123
+
+# Now defining the anchor (too late!)
+api_defaults: &api_defaults
+  timeout: 30
+  retries: 3
+
+# ❌ Duplicate key (silent error - last one wins)
+logging:
+  level: INFO
+  file: app.log
+
+logging:
+  level: DEBUG  # This overwrites the above!
+  format: json
+
+# ❌ Invalid boolean
+features:
+  cache_enabled: True  # Should be lowercase 'true'
+  debug_mode: OFF  # Will become false
+  maintenance: on  # Will become true
+
+# ❌ Incorrect list syntax
+supported_formats:
+- json
+- yaml
+  - xml  # Wrong indentation!
+- csv

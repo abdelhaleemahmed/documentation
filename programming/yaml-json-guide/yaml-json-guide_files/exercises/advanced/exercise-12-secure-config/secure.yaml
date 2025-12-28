@@ -1,0 +1,22 @@
+# Exercise 12: Secure Configuration - Solution
+# All secrets replaced with environment variables
+
+database:
+  host: prod.db.example.com
+  port: 5432
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+
+api:
+  endpoint: https://api.example.com
+  api_key: ${API_KEY}
+  secret_key: ${API_SECRET_KEY}
+
+aws:
+  access_key_id: ${AWS_ACCESS_KEY_ID}
+  secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+
+smtp:
+  host: smtp.example.com
+  username: ${SMTP_USERNAME}
+  password: ${SMTP_PASSWORD}

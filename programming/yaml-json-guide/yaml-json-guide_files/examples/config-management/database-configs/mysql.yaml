@@ -1,0 +1,76 @@
+# MySQL Database Configuration
+# Multi-environment database configuration with read replicas
+
+environments:
+  development:
+    mysql:
+      primary:
+        host: localhost
+        port: 3306
+        database: myapp_dev
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        charset: utf8mb4
+        collation: utf8mb4_unicode_ci
+      connection:
+        pool_size: 5
+        max_overflow: 10
+        pool_timeout: 30
+        pool_recycle: 3600
+      options:
+        sql_mode: STRICT_TRANS_TABLES
+        timezone: UTC
+
+  staging:
+    mysql:
+      primary:
+        host: staging-mysql.example.com
+        port: 3306
+        database: myapp_staging
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        ssl:
+          enabled: true
+          ca_cert: /etc/ssl/certs/ca-bundle.crt
+      connection:
+        pool_size: 10
+        max_overflow: 20
+        pool_timeout: 30
+      read_replicas:
+        - host: staging-mysql-replica1.example.com
+          port: 3306
+        - host: staging-mysql-replica2.example.com
+          port: 3306
+
+  production:
+    mysql:
+      primary:
+        host: prod-mysql-primary.example.com
+        port: 3306
+        database: myapp_prod
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        ssl:
+          enabled: true
+          ca_cert: /etc/ssl/certs/ca-bundle.crt
+          verify_identity: true
+      connection:
+        pool_size: 50
+        max_overflow: 100
+        pool_timeout: 30
+        pool_recycle: 3600
+        echo: false
+      read_replicas:
+        - host: prod-mysql-replica1.example.com
+          port: 3306
+          weight: 100
+        - host: prod-mysql-replica2.example.com
+          port: 3306
+          weight: 100
+        - host: prod-mysql-replica3.example.com
+          port: 3306
+          weight: 50
+      backup:
+        enabled: true
+        schedule: "0 2 * * *"
+        retention_days: 30

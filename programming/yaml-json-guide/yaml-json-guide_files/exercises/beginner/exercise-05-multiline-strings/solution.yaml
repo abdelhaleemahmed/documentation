@@ -1,0 +1,16 @@
+# Exercise 5: Multiline Strings - Solution
+
+deployment:
+  name: "myapp"
+  description: >
+    This is a very long description
+    that spans multiple lines but
+    should be folded into a single
+    line when parsed.
+
+  script: |
+    #!/bin/bash
+    echo "Starting deployment..."
+    npm install
+    npm run build
+    echo "Deployment complete!"

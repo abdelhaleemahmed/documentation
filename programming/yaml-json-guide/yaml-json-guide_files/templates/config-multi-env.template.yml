@@ -1,0 +1,298 @@
+# Multi-Environment Configuration Template
+# Single file with environment-specific overrides
+
+# Base configuration (shared across all environments)
+base: &base_config
+  app:
+    name: myapp
+    version: 1.0.0
+    timezone: UTC
+
+  server:
+    timeout: 30
+    max_connections: 100
+    keep_alive: true
+
+  logging:
+    format: json
+    output: stdout
+    rotation:
+      max_size: 100MB
+      max_files: 10
+      max_age: 30
+
+  features:
+    authentication: true
+    rate_limiting: true
+    caching: true
+    analytics: false
+
+  security:
+    cors:
+      enabled: true
+      origins: ["*"]
+      methods: [GET, POST, PUT, DELETE]
+      headers: ["Content-Type", "Authorization"]
+    headers:
+      x_frame_options: DENY
+      x_content_type_options: nosniff
+      strict_transport_security: max-age=31536000
+
+---
+# Development environment
+development:
+  <<: *base_config  # Inherit base config
+
+  app:
+    <<: *base_config.app
+    environment: development
+
+  server:
+    <<: *base_config.server
+    host: localhost
+    port: 3000
+    debug: true
+    hot_reload: true
+
+  database:
+    host: localhost
+    port: 5432
+    database: myapp_dev
+    username: dev_user
+    password: dev_password
+    pool:
+      min: 1
+      max: 5
+    ssl: false
+
+  redis:
+    host: localhost
+    port: 6379
+    db: 0
+
+  logging:
+    <<: *base_config.logging
+    level: DEBUG
+    pretty_print: true
+
+  features:
+    <<: *base_config.features
+    analytics: false
+    debug_toolbar: true
+
+---
+# Staging environment
+staging:
+  <<: *base_config
+
+  app:
+    <<: *base_config.app
+    environment: staging
+
+  server:
+    <<: *base_config.server
+    host: 0.0.0.0
+    port: 8080
+    debug: false
+    workers: 4
+
+  database:
+    host: staging-db.example.com
+    port: 5432
+    database: myapp_staging
+    username: staging_user
+    password: ${DB_PASSWORD}  # From environment variable
+    pool:
+      min: 2
+      max: 10
+    ssl: true
+    ssl_mode: require
+
+  redis:
+    host: staging-redis.example.com
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    db: 0
+
+  logging:
+    <<: *base_config.logging
+    level: INFO
+
+  features:
+    <<: *base_config.features
+    analytics: true
+    debug_toolbar: false
+
+  monitoring:
+    enabled: true
+    service: datadog
+    api_key: ${DATADOG_API_KEY}
+
+---
+# Production environment
+production:
+  <<: *base_config
+
+  app:
+    <<: *base_config.app
+    environment: production
+
+  server:
+    <<: *base_config.server
+    host: 0.0.0.0
+    port: 8080
+    debug: false
+    workers: 8
+    worker_connections: 1000
+
+  database:
+    host: prod-db-primary.example.com
+    port: 5432
+    database: myapp_production
+    username: prod_user
+    password: ${DB_PASSWORD}
+    pool:
+      min: 5
+      max: 20
+      idle_timeout: 60
+      connect_timeout: 10
+    ssl: true
+    ssl_mode: verify-full
+    ssl_ca: /path/to/ca-cert.pem
+    replica:
+      enabled: true
+      host: prod-db-replica.example.com
+      port: 5432
+
+  redis:
+    host: prod-redis.example.com
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    db: 0
+    cluster:
+      enabled: true
+      nodes:
+        - host: redis-1.example.com
+          port: 6379
+        - host: redis-2.example.com
+          port: 6379
+        - host: redis-3.example.com
+          port: 6379
+
+  logging:
+    <<: *base_config.logging
+    level: WARNING
+    sentry:
+      enabled: true
+      dsn: ${SENTRY_DSN}
+      environment: production
+
+  features:
+    <<: *base_config.features
+    analytics: true
+    debug_toolbar: false
+
+  monitoring:
+    enabled: true
+    service: datadog
+    api_key: ${DATADOG_API_KEY}
+    apm:
+      enabled: true
+      service_name: myapp
+
+  security:
+    <<: *base_config.security
+    cors:
+      enabled: true
+      origins:
+        - https://example.com
+        - https://www.example.com
+      methods: [GET, POST, PUT, DELETE]
+      credentials: true
+    rate_limit:
+      requests_per_minute: 60
+      burst: 100
+    firewall:
+      enabled: true
+      whitelist:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"  # 2 AM daily
+    retention_days: 30
+    s3:
+      bucket: myapp-backups
+      region: us-east-1
+      encryption: true
+
+---
+# Testing environment (for CI/CD)
+testing:
+  <<: *base_config
+
+  app:
+    <<: *base_config.app
+    environment: testing
+
+  server:
+    <<: *base_config.server
+    host: localhost
+    port: 8000
+    debug: false
+
+  database:
+    host: localhost
+    port: 5432
+    database: myapp_test
+    username: test_user
+    password: test_password
+    pool:
+      min: 1
+      max: 5
+
+  redis:
+    host: localhost
+    port: 6379
+    db: 1
+
+  logging:
+    <<: *base_config.logging
+    level: ERROR
+    output: file
+    file: /tmp/test.log
+
+  features:
+    <<: *base_config.features
+    analytics: false
+    debug_toolbar: false
+
+---
+# Usage Instructions:
+#
+# 1. Load specific environment:
+#    python app.py --env production
+#    node app.js --env development
+#
+# 2. Using environment variables:
+#    export APP_ENV=production
+#    python app.py
+#
+# 3. In Python:
+#    import yaml
+#    with open('config.yml') as f:
+#        configs = list(yaml.safe_load_all(f))
+#    config = next(c for c in configs if 'production' in c)['production']
+#
+# 4. In Node.js:
+#    const yaml = require('js-yaml');
+#    const fs = require('fs');
+#    const docs = yaml.loadAll(fs.readFileSync('config.yml', 'utf8'));
+#    const config = docs.find(doc => doc.production)?.production;
+#
+# 5. Set environment variables before running:
+#    export DB_PASSWORD=your_secure_password
+#    export REDIS_PASSWORD=your_redis_password
+#    export SENTRY_DSN=your_sentry_dsn
+#    export DATADOG_API_KEY=your_datadog_key

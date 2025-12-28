@@ -1,0 +1,163 @@
+// Jenkins Pipeline Configuration Example
+// Complete CI/CD pipeline for Node.js applications
+
+pipeline {
+    agent any
+
+    // Pipeline options
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+        timeout(time: 1, unit: 'HOURS')
+        timestamps()
+    }
+
+    // Environment variables
+    environment {
+        NODE_VERSION = '18'
+        npm_config_cache = 'npm-cache'
+        CI = 'true'
+    }
+
+    // Pipeline stages
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing Node.js dependencies...'
+                nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                    sh 'node --version'
+                    sh 'npm --version'
+                    sh 'npm ci'
+                }
+            }
+        }
+
+        stage('Lint') {
+            steps {
+                echo 'Running ESLint...'
+                nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                    sh 'npm run lint'
+                }
+            }
+        }
+
+        stage('Test') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        echo 'Running unit tests...'
+                        nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                            sh 'npm run test:unit'
+                        }
+                    }
+                    post {
+                        always {
+                            junit 'test-results/junit.xml'
+                            publishHTML([
+                                reportDir: 'coverage',
+                                reportFiles: 'index.html',
+                                reportName: 'Code Coverage'
+                            ])
+                        }
+                    }
+                }
+
+                stage('Integration Tests') {
+                    steps {
+                        echo 'Running integration tests...'
+                        nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                            sh 'npm run test:integration'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Running security audit...'
+                nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                    script {
+                        sh 'npm audit --audit-level=moderate || true'
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            when {
+                anyOf {
+                    branch 'main'
+                    branch 'develop'
+                }
+            }
+            steps {
+                echo 'Building application...'
+                nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                    sh 'npm run build'
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'dist/**/*', fingerprint: true
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                echo 'Deploying to staging environment...'
+                script {
+                    input message: 'Deploy to staging?', ok: 'Deploy'
+                    nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                        sh 'npm run deploy:staging'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo 'Deploying to production environment...'
+                script {
+                    input message: 'Deploy to production?', ok: 'Deploy', submitter: 'admin'
+                    nodejs(nodeJSInstallationName: "Node ${NODE_VERSION}") {
+                        sh 'npm run deploy:production'
+                    }
+                }
+            }
+        }
+    }
+
+    // Post-build actions
+    post {
+        always {
+            echo 'Cleaning up...'
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+            // Add notifications here (email, Slack, etc.)
+        }
+        failure {
+            echo 'Pipeline failed!'
+            // Add failure notifications
+        }
+        unstable {
+            echo 'Pipeline is unstable!'
+        }
+    }
+}

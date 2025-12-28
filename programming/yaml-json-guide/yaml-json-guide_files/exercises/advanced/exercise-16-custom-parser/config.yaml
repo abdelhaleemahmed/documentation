@@ -1,0 +1,28 @@
+# Exercise 16: Example Configuration for Custom Parser
+
+database:
+  host: ${DB_HOST:-localhost}  # With default value
+  port: 5432
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  pool_size: 10
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  workers: 4
+
+api:
+  endpoint: https://api.example.com
+  api_key: ${API_KEY}
+  timeout: 30
+
+cache:
+  enabled: true
+  backend: redis
+  host: ${CACHE_HOST:-localhost}
+  port: 6379
+
+logging:
+  level: ${LOG_LEVEL:-INFO}
+  format: json
