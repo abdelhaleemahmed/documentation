@@ -1,3 +1,9 @@
+---
+title: YAML & JSON Quick Reference
+description: One-page cheat sheet for YAML and JSON syntax, patterns, and common operations
+layout: default
+---
+
 # YAML & JSON Quick Reference Cheat Sheet
 
 **One-page reference for syntax, patterns, and common operations**

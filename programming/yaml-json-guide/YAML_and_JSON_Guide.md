@@ -1,3 +1,9 @@
+---
+title: YAML & JSON Mega Guide
+description: The Complete Configuration Language Reference - 7,600+ lines covering YAML and JSON from basics to advanced patterns
+layout: default
+---
+
 # 🚀 YAML & JSON Mega Guide: The Complete Configuration Language Reference
 
 ---

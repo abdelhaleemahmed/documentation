@@ -1,3 +1,9 @@
+---
+title: YAML & JSON Guide Repository
+description: Companion repository with examples, exercises, tools, and resources for the YAML & JSON Mega Guide
+layout: default
+---
+
 # YAML & JSON Guide - Companion Repository
 
 **Official companion repository for the [YAML & JSON Mega Guide](link-to-guide)**

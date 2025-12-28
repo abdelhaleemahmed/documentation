@@ -1,3 +1,9 @@
+---
+title: Complete User Guide
+description: How to use all 105+ files in the YAML & JSON Guide repository
+layout: default
+---
+
 # YAML & JSON Guide - Complete User Guide
 
 **Welcome!** This guide will help you make the most of the 105+ files in this repository.

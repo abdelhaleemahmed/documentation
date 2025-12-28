@@ -1,0 +1,56 @@
+# Documentation Repository - Jekyll Configuration
+
+# Site Settings
+title: Technical Documentation Collection
+description: Programming guides, system administration, and development resources
+author: Ahmed Abdelhaleem
+url: https://abdelhaleemahmed.github.io
+baseurl: /documentation
+
+# Build Settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+
+# Keep the existing index.html as the landing page
+# Jekyll will render .md files while leaving .html files as-is
+
+# Plugins (GitHub Pages safe plugins)
+plugins:
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-titles-from-headings
+
+# Plugin Configuration
+relative_links:
+  enabled: true
+  collections: false
+
+optional_front_matter:
+  remove_originals: false
+
+titles_from_headings:
+  enabled: true
+  strip_title: true
+  collections: false
+
+# File Handling
+include:
+  - README.md
+
+exclude:
+  - node_modules/
+  - vendor/
+  - .git/
+  - .gitignore
+  - "*.json"
+  - package.json
+  - package-lock.json
+
+# No theme - use default rendering with existing HTML/CSS
+# This allows your custom index.html files to work as-is
+# while .md files get rendered with basic GitHub styling
