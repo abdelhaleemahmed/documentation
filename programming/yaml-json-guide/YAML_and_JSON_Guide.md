@@ -465,6 +465,11 @@ name: value
 <a id="1--introduction--history"></a>
 ## 1. 📜 Introduction & History 🟢
 
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section01_introduction_and_history.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 **Why this matters:**
 Understanding where YAML and JSON come from helps you appreciate why each format was designed the way it is. Their origins explain their strengths, weaknesses, and why certain industries — like DevOps for YAML and web APIs for JSON — adopted them so heavily.
 
@@ -513,6 +518,11 @@ JSON (JavaScript Object Notation) was popularized by Douglas Crockford in early 
 
 <a id="2--quick-comparison-yaml-vs-json"></a>
 ## 2. ⚖️ Quick Comparison: YAML vs JSON 🟢
+
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section02_quick_comparison.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Why this matters:**
 YAML and JSON often appear together in modern systems. Knowing the practical differences helps you choose the right format for configs, APIs, pipelines, and automated workflows. This decision impacts readability, maintainability, and system compatibility.
@@ -668,6 +678,11 @@ flowchart TD
 
 <a id="3--yaml-deep-dive"></a>
 ## 3. 🧭 YAML Deep Dive 🟢🟡
+
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section03_yaml_deep_dive.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Why this matters:**
 YAML powers configuration for Kubernetes, Ansible, GitHub Actions, Docker Compose, and countless DevOps tools. A deep understanding of YAML prevents production outages caused by indentation errors, type misinterpretation, or incorrect structure.
@@ -1063,6 +1078,11 @@ graph TD
 <a id="4--json-deep-dive"></a>
 ## 4. 🔷 JSON Deep Dive 🟢🟡
 
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section04_json_deep_dive.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 **Why this matters:**
 JSON is the foundation of modern web APIs, mobile apps, microservices, and cloud systems. Understanding JSON deeply ensures reliable data contracts, stable API integrations, and secure parsing.
 
@@ -1363,6 +1383,11 @@ Line 2",
 <a id="5--practical-conversion-guide"></a>
 ## 5. 🔄 Practical Conversion Guide 🟡
 
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section05_conversion_guide.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 **Why this matters:**
 Teams often mix YAML for configuration and JSON for APIs. Converting between them without losing comments, structure, or type fidelity is critical for automation, CI pipelines, and cross-system compatibility.
 
@@ -1632,6 +1657,11 @@ JSON:
 
 <a id="6--real-world-use-cases"></a>
 ## 6. 🌍 Real-World Use Cases 🟡
+
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section06_use_cases.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Why this matters:**
 Seeing YAML/JSON in Kubernetes, Docker, APIs, and CI/CD systems provides real context. This helps readers understand how serialization formats affect deployments, performance, and application behavior.
@@ -2162,6 +2192,11 @@ jobs:
 <a id="7--advanced-patterns--best-practices"></a>
 ## 7. 🏗️ Advanced Patterns & Best Practices 🔴
 
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section07_advanced_patterns.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 **Why this matters:**
 Poor configuration design leads to outages, duplication, and security issues. Best practices help you design scalable, secure, and maintainable configuration architectures for enterprise environments.
 
@@ -2569,6 +2604,11 @@ secrets:
 
 <a id="8--tools--ecosystem"></a>
 ## 8. 🛠️ Tools & Ecosystem 🟡
+
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section08_tools_ecosystem.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Why this matters:**
 Choosing tools like yq, jq, schema validators, or proper VS Code extensions saves enormous time. The ecosystem determines how quickly you can diagnose problems, validate configurations, and automate workflows.
@@ -3627,6 +3667,11 @@ recommendation:
 <a id="9--performance--security"></a>
 ## 9. ⚡ Performance & Security 🔴
 
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section09_performance_security.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 **Why this matters:**
 YAML can execute code if parsed unsafely. JSON is fast but can be insecure when parsed with eval(). Understanding performance and security avoids vulnerabilities, production outages, and performance bottlenecks.
 
@@ -3839,6 +3884,11 @@ with open('config.yaml', 'r') as f:
 
 <a id="10--cheat-sheets--quick-references"></a>
 ## 10. 📋 Cheat Sheets & Quick References 🟢
+
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section10_cheat_sheets.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Why this matters:**
 Developers often need quick reminders, not long documentation. Cheat sheets improve daily productivity, code review accuracy, and error-free editing across teams.
@@ -4088,6 +4138,11 @@ time: !!str 12:30:00
 
 <a id="11--troubleshooting--common-errors"></a>
 ## 11. 🔧 Troubleshooting & Common Errors 🟡
+
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section11_troubleshooting.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Stuck with an error?** This section provides real error messages, their causes, and step-by-step solutions to get you back on track.
 
@@ -4932,6 +4987,11 @@ except jsonschema.ValidationError as e:
 
 <a id="12--practice-exercises"></a>
 ## 12. 💪 Practice Exercises 🟢🟡🔴
+
+<audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
+  <source src="audio/section12_exercises.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
 **Ready to test your skills?** This section provides hands-on exercises across all skill levels. Work through them to reinforce what you've learned!
 
