@@ -138,8 +138,9 @@
     <!-- Mermaid.js for diagram rendering -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script>
+        // Initialize Mermaid
         mermaid.initialize({
-            startOnLoad: true,
+            startOnLoad: false,
             theme: 'default',
             securityLevel: 'loose',
             flowchart: {
@@ -147,6 +148,26 @@
                 htmlLabels: true,
                 curve: 'basis'
             }
+        });
+
+        // Convert Jekyll's <code class="language-mermaid"> to renderable Mermaid diagrams
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all code blocks with language-mermaid class
+            const mermaidBlocks = document.querySelectorAll('code.language-mermaid');
+
+            mermaidBlocks.forEach((block, index) => {
+                // Create a new div with mermaid class
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                mermaidDiv.textContent = block.textContent;
+
+                // Replace the pre>code block with the mermaid div
+                const preBlock = block.parentElement;
+                preBlock.parentElement.replaceChild(mermaidDiv, preBlock);
+            });
+
+            // Now render all mermaid diagrams
+            mermaid.run();
         });
     </script>
 
