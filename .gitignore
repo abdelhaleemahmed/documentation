@@ -36,3 +36,6 @@ Thumbs.db
 # IDE specific
 *.sublime-project
 *.sublime-workspace
+
+# Local development documentation
+**/DEPLOYMENT_GUIDE.md
