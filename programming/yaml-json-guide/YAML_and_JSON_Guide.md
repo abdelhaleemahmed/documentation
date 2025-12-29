@@ -7307,10 +7307,10 @@ You've progressed from basic syntax to:
 
 **Guide Sections:**
 - [Quick Start](#-quick-start-5-minutes) - Get started in 5 minutes
-- [Cheat Sheets](#10--cheat-sheets--quick-references-) - Quick syntax reference
-- [Troubleshooting](#11--troubleshooting--common-errors-) - Fix errors fast
-- [Practice Exercises](#12--practice-exercises-) - Hands-on learning
-- [Glossary](#13--glossary-) - Term definitions
+- [Cheat Sheets](#10--cheat-sheets--quick-references) - Quick syntax reference
+- [Troubleshooting](#11--troubleshooting--common-errors) - Fix errors fast
+- [Practice Exercises](#12--practice-exercises) - Hands-on learning
+- [Glossary](#13--glossary) - Term definitions
 
 **External Resources:**
 - YAML Spec: https://yaml.org/spec/
