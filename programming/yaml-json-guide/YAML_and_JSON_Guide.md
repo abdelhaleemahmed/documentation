@@ -465,6 +465,7 @@ name: value
 <a id="1--introduction--history"></a>
 ## 1. 📜 Introduction & History 🟢
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section01_introduction_and_history.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -519,6 +520,7 @@ JSON (JavaScript Object Notation) was popularized by Douglas Crockford in early 
 <a id="2--quick-comparison-yaml-vs-json"></a>
 ## 2. ⚖️ Quick Comparison: YAML vs JSON 🟢
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section02_quick_comparison.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -679,6 +681,7 @@ flowchart TD
 <a id="3--yaml-deep-dive"></a>
 ## 3. 🧭 YAML Deep Dive 🟢🟡
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section03_yaml_deep_dive.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -1078,6 +1081,7 @@ graph TD
 <a id="4--json-deep-dive"></a>
 ## 4. 🔷 JSON Deep Dive 🟢🟡
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section04_json_deep_dive.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -1383,6 +1387,7 @@ Line 2",
 <a id="5--practical-conversion-guide"></a>
 ## 5. 🔄 Practical Conversion Guide 🟡
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section05_conversion_guide.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -1658,6 +1663,7 @@ JSON:
 <a id="6--real-world-use-cases"></a>
 ## 6. 🌍 Real-World Use Cases 🟡
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section06_use_cases.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -2192,6 +2198,7 @@ jobs:
 <a id="7--advanced-patterns--best-practices"></a>
 ## 7. 🏗️ Advanced Patterns & Best Practices 🔴
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section07_advanced_patterns.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -2605,6 +2612,7 @@ secrets:
 <a id="8--tools--ecosystem"></a>
 ## 8. 🛠️ Tools & Ecosystem 🟡
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section08_tools_ecosystem.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -3667,6 +3675,7 @@ recommendation:
 <a id="9--performance--security"></a>
 ## 9. ⚡ Performance & Security 🔴
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section09_performance_security.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -3885,6 +3894,7 @@ with open('config.yaml', 'r') as f:
 <a id="10--cheat-sheets--quick-references"></a>
 ## 10. 📋 Cheat Sheets & Quick References 🟢
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section10_cheat_sheets.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -4139,6 +4149,7 @@ time: !!str 12:30:00
 <a id="11--troubleshooting--common-errors"></a>
 ## 11. 🔧 Troubleshooting & Common Errors 🟡
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section11_troubleshooting.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -4988,6 +4999,7 @@ except jsonschema.ValidationError as e:
 <a id="12--practice-exercises"></a>
 ## 12. 💪 Practice Exercises 🟢🟡🔴
 
+**🔊 Listen to this section**
 <audio controls style="width: 100%; max-width: 800px; margin: 20px 0;">
   <source src="audio/section12_exercises.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
